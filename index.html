@@ -1,0 +1,2435 @@
+<!DOCTYPE html>
+<html lang="id" data-tema="gelap">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ADITYA — Full Stack Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Mulish:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet"/>
+<style>
+/* ╔═══════════════════════════════════════════════════════════╗
+   ║  PORTOFOLIO ULTIMATE — BANYAK FITUR & MENU               ║
+   ║  Fitur: Tema terang/gelap, Kalkulator harga, Filter      ║
+   ║         portofolio, Timeline, Testimonial, FAQ,          ║
+   ║         Live chat float, Ketersediaan, Notifikasi toast  ║
+   ╚═══════════════════════════════════════════════════════════╝ */
+:root {
+  /* ── Warna tema gelap ── */
+  --bg:       #020309;
+  --bg2:      #05060f;
+  --bg3:      #08091a;
+  --surface:  #0d0f20;
+  --batas:    #181c35;
+  --batas2:   #232848;
+
+  /* ── Aksen ── */
+  --neon:     #00ffcc;
+  --neon-r:   rgba(0,255,204,.12);
+  --ungu:     #8b5cf6;
+  --ungu-r:   rgba(139,92,246,.12);
+  --oren:     #ff6b35;
+  --hijau:    #39ff14;
+  --kuning:   #ffe066;
+  --merah:    #ff4d6d;
+
+  /* ── Teks ── */
+  --t1:  #f0f4ff;
+  --t2:  #c0ccf0;
+  --t3:  #7080a8;
+  --t4:  #303858;
+
+  /* ── Font ── */
+  --fd: 'Bebas Neue', Impact, sans-serif;
+  --fm: 'DM Mono', monospace;
+  --fb: 'Mulish', sans-serif;
+
+  /* ── Ukuran responsif ── */
+  --fxs: clamp(.62rem,1.1vw,.72rem);
+  --fs:  clamp(.76rem,1.3vw,.88rem);
+  --fm2: clamp(.9rem,1.5vw,1rem);
+  --fl:  clamp(1.1rem,2vw,1.3rem);
+  --fxl: clamp(1.5rem,3vw,2.2rem);
+  --f2x: clamp(2rem,5vw,3.5rem);
+  --fhero: clamp(3.2rem,10vw,8.5rem);
+
+  /* ── Spasi ── */
+  --sxs: clamp(.3rem,.6vw,.5rem);
+  --ss:  clamp(.6rem,1.2vw,1rem);
+  --sm:  clamp(1rem,2vw,1.5rem);
+  --sl:  clamp(1.5rem,3vw,2.5rem);
+  --sxl: clamp(2rem,5vw,4rem);
+  --s2x: clamp(3rem,8vw,6rem);
+  --s3x: clamp(4rem,10vw,8rem);
+
+  --r1: 6px; --r2: 12px; --r3: 18px; --r4: 24px;
+  --ta: .25s cubic-bezier(.4,0,.2,1);
+  --tb: .5s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── Tema Terang ── */
+[data-tema="terang"] {
+  --bg:      #f4f6ff;
+  --bg2:     #eaedf8;
+  --bg3:     #e0e4f5;
+  --surface: #d8dcf0;
+  --batas:   #c0c8e8;
+  --batas2:  #a8b2d8;
+  --t1:      #0a0c20;
+  --t2:      #1a2040;
+  --t3:      #485078;
+  --t4:      #8090b8;
+  --neon:    #0066cc;
+  --neon-r:  rgba(0,102,204,.1);
+  --ungu:    #6020c0;
+  --ungu-r:  rgba(96,32,192,.1);
+}
+
+*,*::before,*::after { margin:0;padding:0;box-sizing:border-box; }
+html { scroll-behavior:smooth; font-size:16px; }
+body {
+  background: var(--bg);
+  color: var(--t1);
+  font-family: var(--fb);
+  font-weight: 400;
+  overflow-x: hidden;
+  transition: background .4s ease, color .4s ease;
+}
+@media(pointer:fine){ body { cursor:none; } }
+::-webkit-scrollbar { width:3px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--neon);border-radius:2px; }
+::selection { background:rgba(0,255,204,.2);color:var(--neon); }
+
+/* ══════════════════════════════════════════
+   CANVAS & OVERLAY
+══════════════════════════════════════════ */
+canvas#neural {
+  position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+}
+[data-tema="terang"] canvas#neural { opacity:.15; }
+#scan {
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);
+}
+[data-tema="terang"] #scan { opacity:.3; }
+
+/* ══════════════════════════════════════════
+   KURSOR
+══════════════════════════════════════════ */
+@media(pointer:fine) {
+  #kursor {
+    position:fixed;width:12px;height:12px;border-radius:50%;
+    background:var(--neon);box-shadow:0 0 14px var(--neon);
+    pointer-events:none;z-index:9000;
+    transform:translate(-50%,-50%);mix-blend-mode:screen;
+    transition:width .15s,height .15s;
+  }
+  #kursor-ring {
+    position:fixed;width:38px;height:38px;border-radius:50%;
+    border:1px solid rgba(0,255,204,.3);
+    pointer-events:none;z-index:8999;
+    transform:translate(-50%,-50%);
+    transition:width .3s,height .3s;
+  }
+  body.kh #kursor { width:0;height:0; }
+  body.kh #kursor-ring { width:60px;height:60px;border-color:var(--neon); }
+}
+
+/* ══════════════════════════════════════════
+   PROGRES SCROLL
+══════════════════════════════════════════ */
+#progres {
+  position:fixed;top:0;left:0;z-index:9001;
+  height:2px;width:0%;
+  background:linear-gradient(90deg,var(--ungu),var(--neon),var(--hijau));
+  box-shadow:0 0 6px var(--neon);transition:width .08s linear;
+}
+
+/* ══════════════════════════════════════════
+   INTRO
+══════════════════════════════════════════ */
+#intro {
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:var(--sm);padding:var(--sm);
+  transition:opacity .6s ease,visibility .6s ease;
+}
+#intro.keluar { opacity:0;visibility:hidden;pointer-events:none; }
+.term {
+  width:min(560px,95vw);background:var(--bg3);
+  border:1px solid var(--batas2);border-radius:var(--r2);
+  padding:var(--sm) var(--sl);
+  font-family:var(--fm);font-size:clamp(.68rem,1.3vw,.82rem);
+  line-height:1.9;
+}
+.tbaris { display:block;opacity:0;transform:translateX(-6px);color:var(--t2); }
+.tbaris.on { animation:baris-in .25s ease forwards; }
+@keyframes baris-in { to{opacity:1;transform:translateX(0);} }
+.tp  { color:var(--ungu);font-weight:500; }
+.tok { color:var(--hijau); }
+.ti  { color:var(--kuning); }
+.tkursor { display:inline-block;width:7px;height:.9em;background:var(--neon);vertical-align:middle;animation:blink .7s infinite;margin-left:2px; }
+@keyframes blink { 0%,100%{opacity:1;}50%{opacity:0;} }
+.intro-bar-w { width:min(560px,95vw);height:2px;background:var(--batas); }
+.intro-bar { height:100%;width:0%;background:linear-gradient(90deg,var(--ungu),var(--neon));box-shadow:0 0 8px var(--neon); }
+.intro-inf { width:min(560px,95vw);display:flex;justify-content:space-between;font-family:var(--fm);font-size:var(--fxs);color:var(--t3); }
+
+/* ══════════════════════════════════════════
+   NAVIGASI
+══════════════════════════════════════════ */
+#nav {
+  position:fixed;top:0;left:0;right:0;z-index:800;
+  height:clamp(52px,7vw,60px);
+  padding:0 clamp(4%,5vw,6%);
+  display:flex;align-items:center;justify-content:space-between;
+  gap:var(--sm);transition:var(--tb);
+}
+#nav.gulir {
+  background:rgba(2,3,9,.9);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--batas);
+}
+[data-tema="terang"] #nav.gulir { background:rgba(244,246,255,.92); }
+.nav-logo { font-family:var(--fd);font-size:clamp(1.1rem,2.5vw,1.5rem);letter-spacing:3px;color:var(--t1);text-decoration:none; }
+.nav-links { display:flex;gap:2px;list-style:none; }
+.nav-links a { font-family:var(--fm);font-size:var(--fxs);color:var(--t3);padding:7px clamp(8px,1.2vw,13px);border-radius:var(--r1);letter-spacing:.5px;transition:var(--ta);text-decoration:none; }
+.nav-links a:hover { color:var(--neon);background:var(--neon-r); }
+/* Tombol-tombol kanan nav */
+.nav-kanan { display:flex;align-items:center;gap:8px;flex-shrink:0; }
+/* Toggle tema */
+.btn-tema {
+  width:36px;height:36px;border-radius:50%;
+  background:var(--surface);border:1px solid var(--batas2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.9rem;cursor:pointer;transition:var(--ta);
+  color:var(--t3);
+}
+.btn-tema:hover { border-color:var(--neon);color:var(--neon);background:var(--neon-r); }
+/* Toggle bahasa */
+.btn-lang {
+  font-family:var(--fm);font-size:var(--fxs);
+  background:var(--surface);border:1px solid var(--batas2);
+  color:var(--t3);padding:6px 12px;border-radius:var(--r1);
+  cursor:pointer;transition:var(--ta);letter-spacing:.5px;
+  white-space:nowrap;
+}
+.btn-lang:hover { border-color:var(--neon);color:var(--neon); }
+/* Tombol hire */
+.nav-hire {
+  font-family:var(--fm);font-size:var(--fxs);font-weight:500;
+  color:var(--bg);background:var(--neon);
+  padding:clamp(7px,1.2vw,9px) clamp(12px,2vw,18px);
+  border-radius:var(--r1);text-decoration:none;
+  letter-spacing:.5px;transition:var(--ta);
+  white-space:nowrap;box-shadow:0 0 18px rgba(0,255,204,.2);
+}
+.nav-hire:hover { background:#33ffdd;box-shadow:0 0 32px rgba(0,255,204,.4); }
+/* Hamburger */
+.nav-hb { display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px; }
+.nav-hb span { display:block;width:22px;height:2px;background:var(--t1);border-radius:1px;transition:var(--ta); }
+.nav-hb.on span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
+.nav-hb.on span:nth-child(2){opacity:0;}
+.nav-hb.on span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px);}
+/* Drawer mobile */
+.nav-drawer {
+  display:none;position:fixed;
+  top:clamp(52px,7vw,60px);left:0;right:0;
+  background:rgba(2,3,9,.97);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--batas);
+  padding:var(--sm) clamp(4%,5vw,6%);
+  flex-direction:column;gap:4px;z-index:799;
+}
+[data-tema="terang"] .nav-drawer { background:rgba(244,246,255,.97); }
+.nav-drawer.on { display:flex; }
+.nav-drawer a { font-family:var(--fm);font-size:.88rem;color:var(--t2);padding:12px 0;border-bottom:1px solid var(--batas);letter-spacing:.5px;text-decoration:none;transition:color .2s; }
+.nav-drawer a:last-child { border:none; }
+.nav-drawer a:hover { color:var(--neon); }
+
+/* ══════════════════════════════════════════
+   BADGE KETERSEDIAAN (pojok kanan bawah)
+══════════════════════════════════════════ */
+#badge-tersedia {
+  position:fixed;bottom:calc(var(--sl) + 80px);right:var(--sl);
+  z-index:700;
+  background:var(--bg3);border:1px solid var(--batas2);
+  border-radius:100px;padding:8px 16px;
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--fm);font-size:var(--fxs);
+  color:var(--t2);box-shadow:0 8px 24px rgba(0,0,0,.4);
+  transition:var(--ta);cursor:default;
+  animation:badge-masuk .6s 3.5s ease both;
+}
+@keyframes badge-masuk { from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);} }
+#badge-tersedia::before { content:'';width:7px;height:7px;border-radius:50%;background:var(--hijau);box-shadow:0 0 8px var(--hijau);animation:blink 2s infinite;flex-shrink:0; }
+#badge-tersedia:hover { border-color:var(--hijau);background:rgba(57,255,20,.06); }
+
+/* ══════════════════════════════════════════
+   FLOAT CHAT
+══════════════════════════════════════════ */
+#float-chat {
+  position:fixed;bottom:var(--sl);right:var(--sl);z-index:700;
+  display:flex;flex-direction:column;align-items:flex-end;gap:10px;
+}
+.chat-btn {
+  width:clamp(50px,7vw,58px);height:clamp(50px,7vw,58px);
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--neon),#00ddaa);
+  display:flex;align-items:center;justify-content:center;
+  font-size:clamp(1.1rem,2vw,1.4rem);
+  box-shadow:0 6px 24px rgba(0,255,204,.3);
+  cursor:pointer;border:none;
+  animation:badge-masuk .6s 3.8s ease both;
+  transition:var(--ta);position:relative;
+}
+.chat-btn:hover { transform:scale(1.1);box-shadow:0 10px 40px rgba(0,255,204,.5); }
+/* Notifikasi dot merah */
+.chat-notif {
+  position:absolute;top:0;right:0;
+  width:14px;height:14px;border-radius:50%;
+  background:var(--merah);border:2px solid var(--bg);
+  font-family:var(--fm);font-size:.5rem;color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:700;
+}
+/* Panel chat pop-up */
+.chat-panel {
+  display:none;width:min(300px,85vw);
+  background:var(--bg3);border:1px solid var(--batas2);
+  border-radius:var(--r3);overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+  animation:badge-masuk .3s ease;
+}
+.chat-panel.on { display:block; }
+.cp-head {
+  background:linear-gradient(135deg,var(--neon),#00ddaa);
+  padding:14px 16px;display:flex;align-items:center;gap:10px;
+}
+.cp-avatar { width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;font-size:1rem; }
+.cp-nama { font-family:var(--fm);font-size:.72rem;font-weight:700;color:var(--bg); }
+.cp-status { font-size:.6rem;color:rgba(0,0,0,.6); }
+.cp-close { margin-left:auto;background:none;border:none;cursor:pointer;font-size:1rem;color:rgba(0,0,0,.5);line-height:1; }
+.cp-body { padding:16px; }
+.chat-bubble {
+  background:var(--surface);border-radius:12px 12px 12px 4px;
+  padding:10px 14px;font-size:var(--fxs);color:var(--t2);
+  line-height:1.6;margin-bottom:10px;
+}
+.chat-opsi { display:flex;flex-direction:column;gap:6px; }
+.chat-opsi-btn {
+  background:var(--neon-r);border:1px solid rgba(0,255,204,.25);
+  border-radius:8px;padding:8px 12px;
+  font-family:var(--fm);font-size:var(--fxs);color:var(--neon);
+  cursor:pointer;transition:var(--ta);text-align:left;
+}
+.chat-opsi-btn:hover { background:rgba(0,255,204,.2); }
+
+/* ══════════════════════════════════════════
+   TOMBOL KEMBALI KE ATAS
+══════════════════════════════════════════ */
+#to-top {
+  position:fixed;bottom:var(--sl);left:var(--sl);z-index:700;
+  width:clamp(40px,5vw,48px);height:clamp(40px,5vw,48px);
+  border-radius:50%;
+  background:var(--surface);border:1px solid var(--batas2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;color:var(--t3);cursor:pointer;
+  transition:var(--ta);opacity:0;visibility:hidden;
+  box-shadow:0 4px 16px rgba(0,0,0,.3);
+}
+#to-top.on { opacity:1;visibility:visible; }
+#to-top:hover { border-color:var(--neon);color:var(--neon);background:var(--neon-r);transform:translateY(-3px); }
+
+/* ══════════════════════════════════════════
+   TOAST NOTIFIKASI
+══════════════════════════════════════════ */
+#toast-wrap {
+  position:fixed;top:80px;right:var(--sm);z-index:8000;
+  display:flex;flex-direction:column;gap:8px;pointer-events:none;
+}
+.toast {
+  background:var(--bg3);border:1px solid var(--batas2);
+  border-radius:var(--r2);padding:12px 16px;
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--fm);font-size:var(--fxs);
+  color:var(--t2);max-width:min(320px,90vw);
+  box-shadow:0 8px 24px rgba(0,0,0,.4);
+  pointer-events:all;
+  animation:toast-in .4s ease;transition:var(--ta);
+  border-left:3px solid var(--neon);
+}
+.toast.sukses { border-left-color:var(--hijau); }
+.toast.error  { border-left-color:var(--merah); }
+.toast.info   { border-left-color:var(--kuning); }
+@keyframes toast-in { from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:translateX(0);} }
+.toast.keluar { opacity:0;transform:translateX(30px); }
+.toast-ikon { font-size:1rem;flex-shrink:0; }
+.toast-teks { flex:1;line-height:1.5; }
+.toast-tutup { background:none;border:none;cursor:pointer;color:var(--t3);font-size:.85rem;flex-shrink:0; }
+
+/* ══════════════════════════════════════════
+   HERO
+══════════════════════════════════════════ */
+#hero {
+  min-height:100svh;
+  display:grid;grid-template-columns:1fr min(400px,36%);
+  gap:clamp(24px,4vw,60px);align-items:center;
+  padding:clamp(76px,11vw,100px) clamp(4%,5vw,6%) clamp(40px,6vw,60px);
+  position:relative;z-index:2;
+}
+.hero-eyebrow {
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--fm);font-size:var(--fxs);
+  color:var(--neon);letter-spacing:3px;text-transform:uppercase;
+  margin-bottom:var(--sm);
+  opacity:0;animation:fu .6s .8s ease forwards;
+}
+.hero-eyebrow::before { content:'';width:28px;height:1px;background:var(--neon); }
+.dlive { width:6px;height:6px;border-radius:50%;background:var(--hijau);box-shadow:0 0 8px var(--hijau);animation:blink2 1.5s infinite; }
+@keyframes blink2 { 0%,100%{transform:scale(1);}50%{transform:scale(1.5);} }
+.hero-nama { font-family:var(--fd);font-size:var(--fhero);letter-spacing:-2px;line-height:.88;color:#fff;margin-bottom:4px; }
+.huruf { display:inline-block;opacity:0;transform:translateY(110%) rotate(6deg);animation:hi .7s cubic-bezier(.16,1,.3,1) forwards; }
+@keyframes hi { to{opacity:1;transform:translateY(0) rotate(0);} }
+.hero-outline { display:block;font-family:var(--fd);font-size:var(--fhero);letter-spacing:-2px;line-height:.88;color:transparent;-webkit-text-stroke:2px var(--neon);margin-bottom:var(--sl);animation:napas 4s ease-in-out infinite; }
+@keyframes napas { 0%,100%{filter:drop-shadow(0 0 8px rgba(0,255,204,.2));}50%{filter:drop-shadow(0 0 20px rgba(0,255,204,.5));} }
+.hero-peran { font-family:var(--fm);font-size:var(--fs);color:var(--t3);margin-bottom:var(--ss);opacity:0;animation:fu .6s 1.6s forwards; }
+.diketik { color:var(--neon);font-weight:500;border-right:2px solid var(--neon);padding-right:3px; }
+.hero-desc { font-size:var(--fm2);color:var(--t2);line-height:1.85;max-width:520px;margin-bottom:var(--sl);opacity:0;animation:fu .6s 1.8s forwards;font-weight:300; }
+.hero-aksi { display:flex;gap:var(--ss);flex-wrap:wrap;opacity:0;animation:fu .6s 2s forwards; }
+@keyframes fu { from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);} }
+
+/* Tombol aksi */
+.btn {
+  display:inline-flex;align-items:center;gap:7px;
+  padding:clamp(11px,1.8vw,14px) clamp(16px,2.5vw,26px);
+  border-radius:var(--r1);font-family:var(--fm);
+  font-size:var(--fxs);font-weight:500;
+  letter-spacing:.5px;transition:var(--ta);
+  text-decoration:none;cursor:pointer;border:none;white-space:nowrap;
+}
+.btn-utama { background:linear-gradient(135deg,var(--neon),#00ddaa);color:#020c08;font-weight:700;box-shadow:0 0 22px rgba(0,255,204,.2); }
+.btn-utama:hover { transform:translateY(-2px);box-shadow:0 0 40px rgba(0,255,204,.45); }
+.btn-ghost { background:transparent;color:var(--t2);border:1px solid var(--batas2); }
+.btn-ghost:hover { border-color:var(--neon);color:var(--neon); }
+.btn-ungu { background:linear-gradient(135deg,var(--ungu),#6030d0);color:#fff;box-shadow:0 0 22px rgba(139,92,246,.2); }
+.btn-ungu:hover { transform:translateY(-2px);box-shadow:0 0 40px rgba(139,92,246,.4); }
+
+/* Statistik hero */
+.hero-stat { display:flex;margin-top:var(--sxl);padding-top:var(--sl);border-top:1px solid var(--batas);opacity:0;animation:fu .6s 2.2s forwards; }
+.hs { flex:1;padding-right:var(--sm);border-right:1px solid var(--batas); }
+.hs:last-child { border:none;padding-right:0;padding-left:var(--sm); }
+.hs:nth-child(2) { padding-left:var(--sm); }
+.hs-n { font-family:var(--fd);font-size:var(--f2x);letter-spacing:-1px;line-height:1;color:#fff;text-shadow:0 0 30px rgba(0,255,204,.25); }
+.hs-l { font-family:var(--fm);font-size:var(--fxs);color:var(--t3);letter-spacing:1.5px;text-transform:uppercase;margin-top:4px; }
+
+/* Panel kanan hero */
+.hero-kanan { opacity:0;animation:fu .8s 1s forwards; }
+.holo { background:linear-gradient(135deg,rgba(139,92,246,.07),rgba(0,255,204,.04));border:1px solid var(--batas2);border-radius:var(--r4);overflow:hidden;position:relative;transition:box-shadow .3s; }
+.holo:hover { box-shadow:0 30px 70px rgba(0,0,0,.6); }
+.holo::before { content:'';position:absolute;inset:-1px;border-radius:var(--r4);background:conic-gradient(from 0deg,transparent,var(--neon) 60deg,transparent 120deg,var(--ungu) 180deg,transparent 240deg,var(--merah) 300deg,transparent);animation:spin4 4s linear infinite;z-index:-1;opacity:0;transition:opacity .4s; }
+.holo:hover::before { opacity:.4; }
+@keyframes spin4 { to{transform:rotate(360deg);} }
+.hp-bar { padding:clamp(12px,2vw,16px) clamp(14px,2.5vw,18px);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--batas); }
+.hp-dots { display:flex;gap:5px; }
+.hp-dot { width:9px;height:9px;border-radius:50%; }
+.hpd1{background:#ff5f56;}.hpd2{background:#ffbd2e;}.hpd3{background:#27c93f;animation:blink .7s infinite;}
+.hp-badge { font-family:var(--fm);font-size:clamp(.5rem,.85vw,.6rem);color:var(--neon);padding:3px 10px;border:1px solid rgba(0,255,204,.25);border-radius:100px;background:rgba(0,255,204,.06);display:flex;align-items:center;gap:6px; }
+.hp-badge::before { content:'';width:5px;height:5px;border-radius:50%;background:var(--neon);animation:blink2 1.5s infinite; }
+.hp-profil { padding:clamp(14px,2.5vw,18px) clamp(14px,2.5vw,18px);display:flex;align-items:center;gap:12px; }
+.hp-av { width:clamp(44px,6vw,56px);height:clamp(44px,6vw,56px);border-radius:50%;flex-shrink:0;background:conic-gradient(var(--neon),var(--ungu),var(--merah),var(--neon));display:flex;align-items:center;justify-content:center;font-size:clamp(1rem,1.8vw,1.3rem);position:relative; }
+.hp-av::after { content:'';position:absolute;inset:-3px;border-radius:50%;border:1.5px solid transparent;border-top-color:var(--neon);border-right-color:var(--ungu);animation:spin4 2s linear infinite; }
+.hp-nm { font-family:var(--fd);font-size:clamp(1rem,2vw,1.2rem);letter-spacing:1px;color:var(--t1); }
+.hp-rl { font-family:var(--fm);font-size:clamp(.54rem,.9vw,.62rem);color:var(--t3);margin-top:2px; }
+.hp-chips { padding:0 clamp(14px,2.5vw,18px) clamp(10px,1.8vw,14px);display:flex;flex-wrap:wrap;gap:5px; }
+.chip { font-family:var(--fm);font-size:clamp(.52rem,.85vw,.6rem);padding:4px 9px;border-radius:4px;border:1px solid var(--batas2);color:var(--t3);background:var(--surface);transition:var(--ta);cursor:default; }
+.chip:hover { border-color:var(--neon);color:var(--neon);background:var(--neon-r); }
+.hp-div { height:1px;background:var(--batas);margin:0 clamp(14px,2.5vw,18px); }
+.hp-info { padding:clamp(12px,2vw,14px) clamp(14px,2.5vw,18px);display:flex;flex-direction:column;gap:9px; }
+.hp-row { display:flex;align-items:center;gap:10px; }
+.hp-ico { width:28px;height:28px;border-radius:7px;flex-shrink:0;background:var(--surface);border:1px solid var(--batas);display:flex;align-items:center;justify-content:center;font-size:.8rem; }
+.hp-lb { font-family:var(--fm);font-size:clamp(.5rem,.8vw,.58rem);color:var(--t3);letter-spacing:.5px;text-transform:uppercase; }
+.hp-vl { font-size:clamp(.68rem,1.1vw,.78rem);color:var(--t2);font-weight:500;margin-top:1px; }
+
+/* Download CV */
+.hp-cv {
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  margin:0 clamp(14px,2.5vw,18px) clamp(14px,2.5vw,18px);
+  padding:11px;border-radius:var(--r1);
+  font-family:var(--fm);font-size:var(--fxs);
+  color:var(--bg);font-weight:700;
+  background:linear-gradient(135deg,var(--neon),#00ddaa);
+  cursor:pointer;border:none;transition:var(--ta);
+  box-shadow:0 0 20px rgba(0,255,204,.15);
+}
+.hp-cv:hover { transform:translateY(-2px);box-shadow:0 0 35px rgba(0,255,204,.35); }
+
+/* ══════════════════════════════════════════
+   MARQUEE
+══════════════════════════════════════════ */
+#marquee { overflow:hidden;border-top:1px solid var(--batas);border-bottom:1px solid var(--batas);background:var(--bg2);position:relative;z-index:2; }
+#marquee::before,#marquee::after { content:'';position:absolute;top:0;bottom:0;width:clamp(50px,7vw,100px);z-index:2;pointer-events:none; }
+#marquee::before { left:0;background:linear-gradient(90deg,var(--bg2),transparent); }
+#marquee::after  { right:0;background:linear-gradient(-90deg,var(--bg2),transparent); }
+.jalur { display:flex;width:max-content;animation:jalur-g 28s linear infinite; }
+.jalur:hover { animation-play-state:paused; }
+@keyframes jalur-g { from{transform:translateX(0);}to{transform:translateX(-50%);} }
+.jalur-w { padding:clamp(10px,1.5vw,13px) 0; }
+.mq { display:inline-flex;align-items:center;gap:7px;padding:0 clamp(14px,2.2vw,22px);border-right:1px solid var(--batas);font-family:var(--fm);font-size:clamp(.62rem,1vw,.72rem);color:var(--t3);white-space:nowrap;transition:color .2s; }
+.mq:hover { color:var(--neon); }
+
+/* ══════════════════════════════════════════
+   SEKSI UMUM
+══════════════════════════════════════════ */
+.sek { position:relative;z-index:2;padding:var(--s3x) clamp(4%,5vw,6%); }
+.si  { max-width:min(1400px,96%);margin:0 auto; }
+.s-tag { font-family:var(--fm);font-size:var(--fxs);color:var(--neon);letter-spacing:4px;text-transform:uppercase;margin-bottom:var(--ss);display:flex;align-items:center;gap:10px;font-weight:500; }
+.s-tag::before { content:'';width:18px;height:1px;background:var(--neon); }
+.s-judul { font-family:var(--fd);font-size:var(--f2x);letter-spacing:-1px;color:var(--t1);margin-bottom:var(--ss);line-height:1.05; }
+.s-judul em { font-style:italic;color:transparent;-webkit-text-stroke:1.5px var(--neon); }
+.s-sub { font-size:var(--fm2);color:var(--t2);line-height:1.8;max-width:min(480px,100%);font-weight:300; }
+/* Reveal */
+.rv { opacity:0;transform:translateY(28px);transition:opacity .7s,transform .7s; }
+.rv.on { opacity:1;transform:translateY(0); }
+.rv-c>* { opacity:0;transform:translateY(22px);transition:opacity .6s,transform .6s; }
+.rv-c.on>*:nth-child(1){opacity:1;transform:none;transition-delay:.04s;}
+.rv-c.on>*:nth-child(2){opacity:1;transform:none;transition-delay:.11s;}
+.rv-c.on>*:nth-child(3){opacity:1;transform:none;transition-delay:.18s;}
+.rv-c.on>*:nth-child(4){opacity:1;transform:none;transition-delay:.25s;}
+.rv-c.on>*:nth-child(5){opacity:1;transform:none;transition-delay:.32s;}
+.rv-c.on>*:nth-child(6){opacity:1;transform:none;transition-delay:.39s;}
+
+/* ══════════════════════════════════════════
+   LAYANAN
+══════════════════════════════════════════ */
+#layanan { background:var(--bg2);border-top:1px solid var(--batas); }
+.lay-header { display:grid;grid-template-columns:1fr 1fr;gap:var(--sl);align-items:end;margin-bottom:var(--sxl); }
+.lay-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:1px;background:var(--batas);border:1px solid var(--batas);border-radius:var(--r4);overflow:hidden; }
+.lay-k { background:var(--bg2);padding:clamp(20px,3vw,30px);transition:background .3s;position:relative;overflow:hidden;cursor:default; }
+.lay-k::before { content:'';position:absolute;top:0;left:0;right:0;height:1.5px;background:linear-gradient(90deg,transparent,var(--neon),transparent);transform:scaleX(0);transform-origin:center;transition:transform .5s; }
+.lay-k:hover { background:var(--bg3); }
+.lay-k:hover::before { transform:scaleX(1); }
+.lay-k:hover .lay-ico { border-color:rgba(0,255,204,.3);box-shadow:0 0 12px rgba(0,255,204,.12); }
+.lay-no { font-family:var(--fm);font-size:var(--fxs);color:var(--t4);letter-spacing:2px;margin-bottom:clamp(12px,2vw,16px); }
+.lay-ico { width:clamp(38px,5vw,46px);height:clamp(38px,5vw,46px);border-radius:var(--r1);background:var(--surface);border:1px solid var(--batas);display:flex;align-items:center;justify-content:center;font-size:clamp(.95rem,1.7vw,1.2rem);margin-bottom:clamp(12px,2vw,14px);transition:border-color .3s,box-shadow .3s; }
+.lay-tit { font-family:var(--fd);font-size:clamp(.95rem,1.8vw,1.15rem);letter-spacing:.5px;color:var(--t1);margin-bottom:7px; }
+.lay-des { font-size:var(--fs);color:var(--t2);line-height:1.75;margin-bottom:clamp(12px,2vw,14px);font-weight:300; }
+.lay-harga { display:inline-flex;align-items:center;gap:5px;font-family:var(--fm);font-size:var(--fxs);color:var(--neon);font-weight:500;padding:4px 11px;border-radius:5px;background:var(--neon-r);border:1px solid rgba(0,255,204,.2); }
+
+/* ══════════════════════════════════════════
+   KALKULATOR HARGA (FITUR BARU)
+══════════════════════════════════════════ */
+#kalkulator { background:var(--bg3);border-top:1px solid var(--batas); }
+.kalk-grid { display:grid;grid-template-columns:1fr 1fr;gap:var(--sl);align-items:start;margin-top:var(--sxl); }
+.kalk-form-wrap {
+  background:var(--bg2);border:1px solid var(--batas2);
+  border-radius:var(--r4);padding:clamp(20px,3vw,30px);
+}
+.kalk-form-tit { font-family:var(--fm);font-size:var(--fxs);color:var(--neon);letter-spacing:3px;text-transform:uppercase;margin-bottom:var(--sl);display:flex;align-items:center;gap:10px; }
+.kalk-form-tit::after { content:'';flex:1;height:1px;background:var(--batas); }
+/* Opsi layanan */
+.kalk-opsi { display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:var(--sm); }
+.kalk-item {
+  display:flex;flex-direction:column;gap:5px;
+  padding:13px 14px;
+  background:var(--surface);
+  border:1.5px solid var(--batas);
+  border-radius:var(--r2);
+  cursor:pointer;
+  transition:all .25s cubic-bezier(.4,0,.2,1);
+  user-select:none;position:relative;overflow:hidden;
+}
+.kalk-item::before {
+  content:'';position:absolute;left:0;top:0;bottom:0;
+  width:3px;background:var(--neon);
+  transform:scaleY(0);transform-origin:center;
+  transition:transform .25s ease;
+}
+.kalk-item:hover { border-color:var(--batas2);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.3); }
+.kalk-item.aktif {
+  border-color:var(--neon);
+  background:linear-gradient(135deg,rgba(0,255,204,.08),rgba(0,255,204,.03));
+  transform:translateY(-2px);
+  box-shadow:0 6px 20px rgba(0,255,204,.1);
+}
+.kalk-item.aktif::before { transform:scaleY(1); }
+.kalk-item input[type=checkbox] { display:none; }
+.kalk-item-head { display:flex;align-items:center;gap:8px; }
+.kalk-item-ikon {
+  width:28px;height:28px;border-radius:7px;flex-shrink:0;
+  background:var(--bg3);border:1px solid var(--batas2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.8rem;transition:all .25s;
+}
+.kalk-item.aktif .kalk-item-ikon { background:rgba(0,255,204,.15);border-color:rgba(0,255,204,.3); }
+.kalk-item-nm {
+  font-family:var(--fm);font-size:clamp(.6rem,1.1vw,.7rem);
+  color:var(--t2);flex:1;font-weight:500;line-height:1.3;
+}
+.kalk-item.aktif .kalk-item-nm { color:var(--neon); }
+.kalk-cbox {
+  width:16px;height:16px;border-radius:4px;flex-shrink:0;
+  border:1.5px solid var(--batas2);
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;font-size:.58rem;color:transparent;
+}
+.kalk-item.aktif .kalk-cbox { background:var(--neon);border-color:var(--neon);color:var(--bg); }
+.kalk-item-harga {
+  font-family:var(--fm);font-size:clamp(.56rem,.95vw,.64rem);
+  color:var(--t4);padding-left:36px;transition:color .25s;
+}
+.kalk-item.aktif .kalk-item-harga { color:rgba(0,255,204,.7); }
+/* Slider kompleksitas */
+.kalk-slider-wrap { margin-bottom:var(--sm); }
+.kalk-slider-lbl { font-family:var(--fm);font-size:var(--fxs);color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;display:flex;justify-content:space-between; }
+.kalk-slider { width:100%;-webkit-appearance:none;height:3px;border-radius:2px;background:var(--batas);outline:none;cursor:pointer; }
+.kalk-slider::-webkit-slider-thumb { -webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--neon);box-shadow:0 0 8px var(--neon);cursor:pointer;border:2px solid var(--bg); }
+.kalk-tingkat-lbl { display:flex;justify-content:space-between;font-family:var(--fm);font-size:.56rem;color:var(--t4);margin-top:5px; }
+/* Toggle fitur tambahan */
+.kalk-fitur { display:flex;flex-direction:column;gap:6px;margin-bottom:var(--sm); }
+.kalk-toggle {
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 12px;background:var(--surface);border:1px solid var(--batas);
+  border-radius:var(--r1);cursor:pointer;transition:var(--ta);
+}
+.kalk-toggle:hover { border-color:var(--batas2); }
+.kalk-toggle-nm { font-family:var(--fm);font-size:var(--fxs);color:var(--t2); }
+.kalk-switch {
+  width:36px;height:18px;border-radius:100px;
+  background:var(--batas2);position:relative;
+  transition:var(--ta);flex-shrink:0;
+}
+.kalk-switch::after { content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:var(--ta); }
+.kalk-toggle.on .kalk-switch { background:var(--neon); }
+.kalk-toggle.on .kalk-switch::after { transform:translateX(18px); }
+/* Panel hasil estimasi */
+.kalk-hasil {
+  background:linear-gradient(135deg,rgba(0,255,204,.08),rgba(139,92,246,.06));
+  border:1px solid rgba(0,255,204,.2);
+  border-radius:var(--r4);padding:clamp(20px,3vw,30px);
+  position:sticky;top:calc(clamp(52px,7vw,60px) + 20px);
+}
+.kalk-hasil-tit { font-family:var(--fm);font-size:var(--fxs);color:var(--neon);letter-spacing:3px;text-transform:uppercase;margin-bottom:var(--sl); }
+.kalk-rincian { display:flex;flex-direction:column;gap:10px;margin-bottom:var(--sm); }
+.kalk-baris { display:flex;justify-content:space-between;font-family:var(--fm);font-size:var(--fxs);color:var(--t3);padding-bottom:8px;border-bottom:1px solid var(--batas); }
+.kalk-baris:last-child { border:none; }
+.kalk-baris-nm { color:var(--t2); }
+.kalk-baris-harga { color:var(--neon);font-weight:500; }
+.kalk-total-wrap { border-top:1px solid var(--batas2);padding-top:var(--sm);margin-top:var(--ss); }
+.kalk-total-lbl { font-family:var(--fm);font-size:var(--fxs);color:var(--t3);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px; }
+.kalk-total-harga { font-family:var(--fd);font-size:clamp(1.8rem,4vw,2.8rem);letter-spacing:-1px;color:#fff; }
+.kalk-waktu { font-family:var(--fm);font-size:var(--fxs);color:var(--t3);margin-top:8px; }
+.kalk-waktu span { color:var(--kuning); }
+.kalk-cta { display:block;width:100%;margin-top:var(--sm);padding:13px;border-radius:var(--r1);background:linear-gradient(135deg,var(--neon),#00ddaa);color:var(--bg);font-family:var(--fm);font-size:var(--fxs);font-weight:700;letter-spacing:1px;border:none;cursor:pointer;transition:var(--ta);text-align:center; }
+.kalk-cta:hover { transform:translateY(-2px);box-shadow:0 0 30px rgba(0,255,204,.3); }
+
+/* ══════════════════════════════════════════
+   PORTOFOLIO + FILTER TAB (FITUR BARU)
+══════════════════════════════════════════ */
+/* Tab filter */
+.porto-filter { display:flex;gap:6px;flex-wrap:wrap;margin:var(--sl) 0 var(--sm); }
+.pf-btn {
+  font-family:var(--fm);font-size:var(--fxs);
+  padding:7px 16px;border-radius:100px;
+  background:var(--surface);border:1px solid var(--batas);
+  color:var(--t3);cursor:pointer;transition:var(--ta);letter-spacing:.5px;
+}
+.pf-btn:hover { border-color:var(--batas2);color:var(--t2); }
+.pf-btn.aktif { background:var(--neon-r);border-color:rgba(0,255,204,.4);color:var(--neon); }
+
+.porto-grid { display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(8px,1.2vw,12px); }
+.pc {
+  background:var(--bg3);border:1px solid var(--batas);border-radius:var(--r3);overflow:hidden;
+  position:relative;transition:border-color .3s,transform .3s,box-shadow .3s,opacity .4s;
+}
+.pc:hover { border-color:var(--batas2);transform:translateY(-4px);box-shadow:0 20px 50px rgba(0,0,0,.7); }
+.pc.sembunyi { opacity:0;pointer-events:none;transform:scale(.95); }
+.pc.g8{grid-column:span 8;}.pc.g4{grid-column:span 4;}.pc.g6{grid-column:span 6;}
+.pc-thumb { height:clamp(130px,17vw,185px);display:flex;align-items:center;justify-content:center;font-size:clamp(2rem,3.5vw,3rem);position:relative;overflow:hidden; }
+.pc-thumb::after { content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 35%,var(--bg3)); }
+.pc-scan { position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 5px,rgba(255,255,255,.01) 5px,rgba(255,255,255,.011) 6px); }
+.pc-isi { padding:clamp(14px,2.5vw,18px) clamp(14px,2.5vw,20px) clamp(16px,3vw,20px);display:flex;flex-direction:column; }
+.pc-tags { display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px; }
+.pt { font-family:var(--fm);font-size:clamp(.5rem,.8vw,.58rem);font-weight:500;letter-spacing:.5px;padding:3px 8px;border-radius:3px;text-transform:uppercase; }
+.tc{background:rgba(0,255,204,.1);border:1px solid rgba(0,255,204,.25);color:var(--neon);}
+.tu{background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25);color:#b39dff;}
+.th{background:rgba(57,255,20,.1);border:1px solid rgba(57,255,20,.25);color:var(--hijau);}
+.to{background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.25);color:#ff7a99;}
+.pc-tit { font-family:var(--fd);font-size:clamp(.95rem,1.7vw,1.1rem);letter-spacing:.5px;color:var(--t1);margin-bottom:5px; }
+.pc-des { font-size:var(--fs);color:var(--t2);line-height:1.65;flex:1;font-weight:300; }
+.pc-foot { display:flex;align-items:center;justify-content:space-between;margin-top:var(--sm);padding-top:var(--ss);border-top:1px solid var(--batas);gap:8px;flex-wrap:wrap; }
+.pc-stack { display:flex;gap:4px;flex-wrap:wrap; }
+.pc-stack span { font-family:var(--fm);font-size:clamp(.48rem,.76vw,.56rem);color:var(--t3);padding:2px 6px;border:1px solid var(--batas);border-radius:3px; }
+.pc-link { font-family:var(--fm);font-size:var(--fxs);color:var(--neon);font-weight:500;transition:letter-spacing .2s; }
+.pc-link:hover { letter-spacing:1.5px; }
+
+/* ══════════════════════════════════════════
+   TIMELINE PENGALAMAN (FITUR BARU)
+══════════════════════════════════════════ */
+#timeline { background:var(--bg2);border-top:1px solid var(--batas); }
+.tl-wrap { position:relative;margin-top:var(--sxl);padding-left:clamp(24px,4vw,40px); }
+/* Garis vertikal timeline */
+.tl-wrap::before { content:'';position:absolute;left:8px;top:0;bottom:0;width:1.5px;background:linear-gradient(to bottom,var(--neon),var(--ungu),transparent); }
+.tl-item { position:relative;margin-bottom:clamp(28px,5vw,44px); }
+/* Titik pada timeline */
+.tl-item::before {
+  content:'';position:absolute;
+  left:calc(-1 * clamp(24px,4vw,40px) + 3px);top:6px;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--neon);box-shadow:0 0 10px var(--neon);
+  border:2px solid var(--bg);
+}
+.tl-tahun { font-family:var(--fm);font-size:var(--fxs);color:var(--neon);letter-spacing:2px;margin-bottom:5px; }
+.tl-judul { font-family:var(--fd);font-size:var(--fl);letter-spacing:.5px;color:var(--t1);margin-bottom:5px; }
+.tl-sub { font-family:var(--fm);font-size:var(--fxs);color:var(--t3);margin-bottom:8px; }
+.tl-des { font-size:var(--fs);color:var(--t2);line-height:1.75;font-weight:300;max-width:600px; }
+.tl-tags { display:flex;gap:5px;flex-wrap:wrap;margin-top:8px; }
+.tl-tag { font-family:var(--fm);font-size:clamp(.5rem,.8vw,.58rem);color:var(--t3);padding:3px 8px;border:1px solid var(--batas);border-radius:4px; }
+
+/* ══════════════════════════════════════════
+   TENTANG + SKILL
+══════════════════════════════════════════ */
+#tentang { background:var(--bg3);border-top:1px solid var(--batas); }
+.tent-grid { display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,80px);align-items:start;margin-top:var(--sxl); }
+.tent-h3 { font-family:var(--fd);font-size:var(--fxl);letter-spacing:1px;color:var(--t1);margin-bottom:var(--sm);line-height:1.2; }
+.tent-h3 em { font-style:italic;color:var(--neon); }
+.tent-p { font-size:var(--fm2);color:var(--t2);line-height:1.9;margin-bottom:var(--sm);font-weight:300; }
+.fakta { list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:var(--sm); }
+.fakta li { display:flex;align-items:flex-start;gap:10px;font-size:var(--fs);color:var(--t2);padding-bottom:8px;border-bottom:1px solid var(--batas);font-weight:300; }
+.fakta li:last-child { border:none; }
+.fakta li::before { content:'›';color:var(--neon);flex-shrink:0;font-weight:700; }
+.skill-grid { display:flex;flex-direction:column;gap:clamp(12px,2vw,16px); }
+.sk-h { display:flex;justify-content:space-between;font-family:var(--fm);font-size:var(--fxs);color:var(--t2);margin-bottom:6px; }
+.sk-p { color:var(--neon);font-weight:500; }
+.sk-t { height:2px;background:var(--batas);border-radius:1px;overflow:visible;position:relative; }
+.sk-i { height:100%;border-radius:1px;background:linear-gradient(90deg,var(--ungu),var(--neon));transform:scaleX(0);transform-origin:left;transition:transform 1.6s cubic-bezier(.4,0,.2,1);position:relative; }
+.sk-i::after { content:'';position:absolute;right:-3px;top:50%;transform:translateY(-50%);width:5px;height:5px;border-radius:50%;background:var(--neon);box-shadow:0 0 6px var(--neon);opacity:0;transition:opacity .3s 1s; }
+.sk-i.on::after { opacity:1; }
+
+/* ══════════════════════════════════════════
+   TESTIMONIAL (FITUR BARU)
+══════════════════════════════════════════ */
+#testimonial { background:var(--bg2);border-top:1px solid var(--batas); }
+.testi-slider { position:relative;margin-top:var(--sxl); }
+.testi-track { display:flex;gap:var(--sm);overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:4px; }
+.testi-track::-webkit-scrollbar { display:none; }
+.testi-kartu {
+  background:var(--bg3);border:1px solid var(--batas2);border-radius:var(--r3);
+  padding:clamp(20px,3vw,28px);flex-shrink:0;
+  width:clamp(280px,40vw,380px);scroll-snap-align:start;
+  position:relative;transition:border-color .3s;
+}
+.testi-kartu:hover { border-color:var(--neon-r); }
+.testi-kutip { font-size:2rem;color:var(--neon);opacity:.3;line-height:1;margin-bottom:var(--ss); }
+.testi-teks { font-size:var(--fm2);color:var(--t2);line-height:1.75;font-weight:300;font-style:italic;margin-bottom:var(--sm); }
+.testi-profil { display:flex;align-items:center;gap:10px; }
+.testi-av { width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--neon),var(--ungu));display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0; }
+.testi-nm { font-family:var(--fd);font-size:.9rem;letter-spacing:.5px;color:var(--t1); }
+.testi-pos { font-family:var(--fm);font-size:var(--fxs);color:var(--t3);margin-top:1px; }
+.testi-bintang { display:flex;gap:2px;margin-bottom:var(--ss); }
+.testi-bintang span { color:var(--kuning);font-size:.8rem; }
+/* Navigasi slider */
+.testi-nav { display:flex;gap:8px;margin-top:var(--sm);align-items:center; }
+.tn-btn { width:36px;height:36px;border-radius:50%;background:var(--surface);border:1px solid var(--batas);color:var(--t3);cursor:pointer;font-size:.9rem;transition:var(--ta);display:flex;align-items:center;justify-content:center; }
+.tn-btn:hover { border-color:var(--neon);color:var(--neon); }
+.testi-dots { display:flex;gap:6px;align-items:center; }
+.td-dot { width:6px;height:6px;border-radius:50%;background:var(--batas2);cursor:pointer;transition:var(--ta); }
+.td-dot.aktif { background:var(--neon);box-shadow:0 0 6px var(--neon);width:18px;border-radius:3px; }
+
+/* ══════════════════════════════════════════
+   FAQ INTERAKTIF (FITUR BARU)
+══════════════════════════════════════════ */
+#faq { background:var(--bg3);border-top:1px solid var(--batas); }
+.faq-grid { display:grid;grid-template-columns:1fr 1fr;gap:var(--sl);margin-top:var(--sxl); }
+.faq-header { grid-column:1/-1;margin-bottom:var(--sm); }
+.faq-list { display:flex;flex-direction:column;gap:8px; }
+.faq-item {
+  background:var(--bg2);border:1px solid var(--batas);
+  border-radius:var(--r2);overflow:hidden;
+  transition:border-color .3s;
+}
+.faq-item.buka { border-color:var(--batas2); }
+.faq-q {
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:clamp(14px,2vw,16px) clamp(16px,2.5vw,20px);
+  cursor:pointer;font-size:var(--fs);color:var(--t2);
+  font-weight:500;line-height:1.5;
+}
+.faq-q:hover { color:var(--t1); }
+.faq-ikon { width:20px;height:20px;border-radius:50%;border:1px solid var(--batas2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--t3);transition:var(--ta); }
+.faq-item.buka .faq-ikon { background:var(--neon);border-color:var(--neon);color:var(--bg);transform:rotate(45deg); }
+.faq-a { max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s; }
+.faq-a-in { padding:0 clamp(16px,2.5vw,20px) clamp(14px,2vw,16px);font-size:var(--fs);color:var(--t3);line-height:1.75;font-weight:300; }
+.faq-item.buka .faq-a { max-height:200px; }
+
+/* ══════════════════════════════════════════
+   KONTAK
+══════════════════════════════════════════ */
+#kontak { background:var(--bg2);border-top:1px solid var(--batas); }
+.kon-grid { display:grid;grid-template-columns:1fr 1.4fr;gap:clamp(40px,6vw,60px);align-items:start;margin-top:var(--sxl); }
+.kon-h3 { font-family:var(--fd);font-size:var(--fxl);letter-spacing:1px;color:var(--t1);margin-bottom:var(--ss);line-height:1.2; }
+.kon-h3 em { font-style:italic;color:var(--neon); }
+.kon-p { font-size:var(--fm2);color:var(--t2);line-height:1.85;margin-bottom:var(--sl);font-weight:300; }
+.kon-list { display:flex;flex-direction:column;gap:7px; }
+.kon-br { display:flex;align-items:center;gap:12px;padding:clamp(10px,1.8vw,12px) clamp(12px,2vw,14px);background:var(--bg3);border:1px solid var(--batas);border-radius:var(--r1);text-decoration:none;transition:var(--ta); }
+.kon-br:hover { border-color:var(--neon);transform:translateX(7px);background:var(--surface); }
+.kon-ico { width:32px;height:32px;border-radius:7px;background:var(--surface);border:1px solid var(--batas);display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0; }
+.kon-lb { font-family:var(--fm);font-size:clamp(.5rem,.8vw,.58rem);color:var(--t3);letter-spacing:1px;text-transform:uppercase; }
+.kon-vl { font-size:var(--fs);color:var(--t2);font-weight:500;margin-top:1px; }
+/* Copy email button */
+.btn-copy { display:inline-flex;align-items:center;gap:5px;font-family:var(--fm);font-size:var(--fxs);color:var(--t3);background:none;border:none;cursor:pointer;padding:3px 6px;border-radius:4px;transition:var(--ta); }
+.btn-copy:hover { color:var(--neon);background:var(--neon-r); }
+
+/* Form kontak */
+.form-box { background:var(--bg3);border:1px solid var(--batas);border-radius:var(--r4);padding:clamp(20px,3.5vw,30px);position:relative;overflow:hidden; }
+.form-box::before { content:'';position:absolute;top:-70px;right:-70px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(0,255,204,.04),transparent 70%);pointer-events:none; }
+.form-tit { font-family:var(--fm);font-size:var(--fxs);color:var(--neon);letter-spacing:3px;text-transform:uppercase;margin-bottom:clamp(16px,2.5vw,22px);display:flex;align-items:center;gap:10px;font-weight:500; }
+.form-tit::after { content:'';flex:1;height:1px;background:var(--batas); }
+.form-row { display:grid;grid-template-columns:1fr 1fr;gap:clamp(8px,1.2vw,11px); }
+.gi { display:flex;flex-direction:column;gap:5px;margin-bottom:clamp(8px,1.2vw,10px); }
+.gi label { font-family:var(--fm);font-size:clamp(.52rem,.85vw,.6rem);color:var(--t3);letter-spacing:1.5px;text-transform:uppercase; }
+.gi input,.gi textarea,.gi select { background:var(--surface);border:1px solid var(--batas);border-radius:var(--r1);padding:clamp(9px,1.4vw,11px) clamp(10px,1.6vw,13px);font-family:var(--fb);font-size:var(--fs);color:var(--t2);outline:none;transition:border-color .2s,box-shadow .2s;resize:none;font-weight:300;width:100%; }
+.gi input:focus,.gi textarea:focus,.gi select:focus { border-color:var(--neon);box-shadow:0 0 0 1px rgba(0,255,204,.08); }
+.gi input::placeholder,.gi textarea::placeholder { color:var(--t4); }
+.gi textarea { height:clamp(80px,10vw,98px); }
+.gi select { cursor:pointer;color-scheme:dark; }
+.gi select option { background:var(--surface); }
+.btn-kirim { width:100%;padding:clamp(11px,1.8vw,13px);border-radius:var(--r1);background:linear-gradient(135deg,var(--neon),#00ddaa);color:var(--bg);font-family:var(--fm);font-size:var(--fxs);font-weight:700;letter-spacing:1px;border:none;cursor:pointer;transition:var(--ta);box-shadow:0 0 22px rgba(0,255,204,.12); }
+.btn-kirim:hover { transform:translateY(-2px);box-shadow:0 0 42px rgba(0,255,204,.3); }
+.form-note { text-align:center;font-family:var(--fm);font-size:var(--fxs);color:var(--t3);margin-top:clamp(8px,1.2vw,10px); }
+
+/* ══ FOOTER ══ */
+footer { background:var(--bg2);border-top:1px solid var(--batas);padding:clamp(20px,3vw,28px) clamp(4%,5vw,6%);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--sm);position:relative;z-index:2; }
+.f-logo { font-family:var(--fd);font-size:clamp(1rem,1.8vw,1.2rem);letter-spacing:3px;color:var(--t2); }
+.f-mid { font-family:var(--fm);font-size:var(--fxs);color:var(--t3);text-align:center; }
+.f-links { display:flex;gap:clamp(12px,2vw,16px); }
+.f-links a { font-family:var(--fm);font-size:var(--fxs);color:var(--t3);text-decoration:none;transition:color .2s; }
+.f-links a:hover { color:var(--neon); }
+
+/* ══════════════════════════════════════════
+   RESPONSIF
+══════════════════════════════════════════ */
+@media(max-width:768px) {
+  .nav-links{display:none;}.nav-hb{display:flex;}.nav-hire{display:none;}
+  #hero{grid-template-columns:1fr;}.hero-kanan{order:1;}.hero-kiri{order:2;}
+  .lay-header,.faq-grid{grid-template-columns:1fr;}
+  .faq-header{grid-column:auto;}
+  .pc.g8,.pc.g4,.pc.g6{grid-column:span 12;}
+  .tent-grid,.kon-grid{grid-template-columns:1fr;gap:var(--sxl);}
+  .form-row{grid-template-columns:1fr;}
+  .kalk-grid{grid-template-columns:1fr;}
+  .kalk-hasil{position:static;}
+  .hero-stat{display:none;}
+  footer{flex-direction:column;align-items:center;text-align:center;}
+  #badge-tersedia{display:none;}
+}
+@media(max-width:480px) {
+  .porto-filter{gap:4px;}
+  .pf-btn{font-size:.58rem;padding:6px 12px;}
+  .testi-kartu{width:min(280px,85vw);}
+}
+@media(pointer:coarse) {
+  .pc:hover{transform:none;} .btn-utama:hover{transform:none;} .kon-br:hover{transform:none;}
+}
+@media print { #intro,canvas,#scan,#kursor,#kursor-ring,#progres,#nav,#float-chat,#to-top,#badge-tersedia{display:none;} }
+
+/* ══════════════════════════════════════════
+   FIX TAMBAHAN — Mobile & Layout Bugs
+══════════════════════════════════════════ */
+
+/* Fix: tag portofolio tidak menyatu */
+.pc-tags { display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;align-items:center; }
+.pt {
+  display:inline-block;
+  font-family:var(--fm);font-size:clamp(.5rem,.8vw,.58rem);
+  font-weight:500;letter-spacing:.5px;
+  padding:3px 8px;border-radius:3px;text-transform:uppercase;
+  white-space:nowrap;line-height:1.4;
+}
+
+/* kalk-item handled above */
+
+/* Fix: slider label tidak menyatu */
+.kalk-slider-lbl {
+  font-family:var(--fm);font-size:var(--fxs);
+  color:var(--t3);letter-spacing:1px;text-transform:uppercase;
+  margin-bottom:8px;
+  display:flex;justify-content:space-between;align-items:center;
+  gap:8px;
+}
+.kalk-tingkat-lbl {
+  display:flex;justify-content:space-between;
+  font-family:var(--fm);font-size:.56rem;color:var(--t4);
+  margin-top:5px;
+}
+.kalk-tingkat-lbl span { flex:1;text-align:center; }
+.kalk-tingkat-lbl span:first-child { text-align:left; }
+.kalk-tingkat-lbl span:last-child  { text-align:right; }
+
+/* Fix: kalkulator toggle layout */
+.kalk-toggle {
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 12px;background:var(--surface);border:1px solid var(--batas);
+  border-radius:var(--r1);cursor:pointer;transition:var(--ta);
+  gap:8px;
+}
+.kalk-toggle-nm {
+  font-family:var(--fm);font-size:var(--fxs);
+  color:var(--t2);flex:1;line-height:1.4;
+}
+.kalk-switch { flex-shrink:0; }
+
+/* Fix: form kontak layout mobile */
+.gi input,.gi textarea,.gi select {
+  display:block;width:100%;
+}
+
+/* Fix: contact row label dan value */
+.kon-lb { display:block; }
+.kon-vl { display:block; }
+
+/* Fix: pc-stack tidak menyatu */
+.pc-stack { display:flex;gap:5px;flex-wrap:wrap;align-items:center; }
+.pc-stack span { display:inline-block;white-space:nowrap; }
+
+/* Fix: testi kartu min-height */
+.testi-kartu { min-height:200px; }
+
+/* Fix: lay-grid pada mobile tampil 1 kolom dengan gap yg benar */
+@media(max-width:600px) {
+  .lay-grid { grid-template-columns:1fr;gap:1px; }
+  .pc-tags { gap:4px; }
+  .kalk-grid { grid-template-columns:1fr; }
+  .kalk-opsi { grid-template-columns:1fr; }
+  .kalk-fitur { grid-template-columns:1fr; }
+  .kalk-hasil { position:static;margin-top:var(--sm); }
+  .tent-grid { grid-template-columns:1fr;gap:var(--sxl); }
+  .kon-grid  { grid-template-columns:1fr;gap:var(--sxl); }
+  .form-row  { grid-template-columns:1fr; }
+  .faq-grid  { grid-template-columns:1fr; }
+  .faq-header{ grid-column:auto; }
+  .lay-header{ grid-template-columns:1fr; }
+  .tl-wrap   { padding-left:28px; }
+  .hero-stat { display:grid;grid-template-columns:1fr 1fr;gap:var(--sm); }
+  .hs { border:none;padding:0;border-bottom:1px solid var(--batas);padding-bottom:var(--ss); }
+  .hs:last-child { border:none;grid-column:span 2; }
+  .hs:nth-child(2){ padding-left:0; }
+  .hero-kanan { order:1; }
+  .hero-kiri  { order:2; }
+  #hero { grid-template-columns:1fr; }
+  .nav-links  { display:none; }
+  .nav-hb     { display:flex; }
+  .nav-hire   { display:none; }
+}
+</style>
+</head>
+<body>
+<!-- ══ LAYAR INTRO ══ -->
+<div id="intro">
+  <div class="term" id="terminal">
+    <span class="tbaris"><span class="tp">root@aditya:~$</span> ./launch-portfolio.sh --ultimate</span>
+    <span class="tbaris"><span class="tok">✓</span> Memuat desain sistem...</span>
+    <span class="tbaris"><span class="tok">✓</span> Mengkompilasi neural shader...</span>
+    <span class="tbaris"><span class="tok">✓</span> Menyiapkan kalkulator harga...</span>
+    <span class="tbaris"><span class="ti">⟳</span> Menghubungkan jaring sinaptik...</span>
+    <span class="tbaris"><span class="tok">✓</span> Memuat 8 fitur interaktif...</span>
+    <span class="tbaris"><span class="tok">✓</span> Semua sistem operasional</span>
+    <span class="tbaris"><span class="tp">root@aditya:~$</span> <span class="tkursor"></span></span>
+  </div>
+  <div class="intro-bar-w"><div class="intro-bar" id="intro-bar"></div></div>
+  <div class="intro-inf"><span id="intro-st">menginisialisasi...</span><span id="intro-pc">0%</span></div>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div id="toast-wrap"></div>
+
+<!-- ══ LAYER GLOBAL ══ -->
+<div id="progres"></div>
+<div id="kursor"></div>
+<div id="kursor-ring"></div>
+<canvas id="neural"></canvas>
+<div id="scan"></div>
+
+<!-- ══ BADGE & FLOAT ══ -->
+<div id="badge-tersedia">🟢 Tersedia untuk proyek baru</div>
+<div id="float-chat">
+  <div class="chat-panel" id="chat-panel">
+    <div class="cp-head">
+      <div class="cp-avatar">👨‍💻</div>
+      <div><div class="cp-nama">Aditya</div><div class="cp-status">● Online sekarang</div></div>
+      <button class="cp-close" id="chat-tutup">✕</button>
+    </div>
+    <div class="cp-body">
+      <div class="chat-bubble">Halo! 👋 Ada yang bisa saya bantu? Pilih topik yang kamu butuhkan:</div>
+      <div class="chat-opsi">
+        <button class="chat-opsi-btn" onclick="window.open('https://wa.me/6285136500428','_blank')">💬 Chat via WhatsApp</button>
+        <button class="chat-opsi-btn" onclick="document.querySelector('#kalkulator').scrollIntoView({behavior:'smooth'});document.getElementById('chat-panel').classList.remove('on')">🧮 Cek estimasi harga</button>
+        <button class="chat-opsi-btn" onclick="document.querySelector('#portofolio').scrollIntoView({behavior:'smooth'});document.getElementById('chat-panel').classList.remove('on')">📁 Lihat portofolio</button>
+        <button class="chat-opsi-btn" onclick="document.querySelector('#faq').scrollIntoView({behavior:'smooth'});document.getElementById('chat-panel').classList.remove('on')">❓ Lihat FAQ</button>
+      </div>
+    </div>
+  </div>
+  <button class="chat-btn" id="chat-btn" aria-label="Buka chat">💬<span class="chat-notif">1</span></button>
+</div>
+
+<!-- ══ TOMBOL KE ATAS ══ -->
+<button id="to-top" aria-label="Kembali ke atas">↑</button>
+
+<!-- ══ NAVIGASI ══ -->
+<nav id="nav">
+  <a href="#" class="nav-logo">ADITYA</a>
+  <ul class="nav-links">
+    <li><a href="#layanan">Layanan</a></li>
+    <li><a href="#kalkulator">Kalkulator</a></li>
+    <li><a href="#portofolio">Portofolio</a></li>
+    <li><a href="#timeline">Timeline</a></li>
+    <li><a href="#testimonial">Testimoni</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#kontak">Kontak</a></li>
+  </ul>
+  <div class="nav-kanan">
+    <button class="btn-tema" id="btn-tema" title="Ganti tema">🌙</button>
+    <button class="btn-lang" id="btn-lang">ID / EN</button>
+    <a href="#kontak" class="nav-hire">Hire Me →</a>
+    <button class="nav-hb" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<nav class="nav-drawer" id="drawer">
+  <a href="#layanan">Layanan</a>
+  <a href="#kalkulator">Kalkulator Harga</a>
+  <a href="#portofolio">Portofolio</a>
+  <a href="#timeline">Timeline</a>
+  <a href="#testimonial">Testimoni</a>
+  <a href="#faq">FAQ</a>
+  <a href="#kontak">Kontak</a>
+  <a href="https://wa.me/6285136500428" target="_blank" style="color:var(--neon);">💬 WhatsApp</a>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section id="hero">
+  <div class="hero-kiri">
+    <div class="hero-eyebrow"><div class="dlive"></div>Tersedia untuk Proyek Baru · 2024</div>
+    <div class="hero-nama" id="hero-nama">ADITYA</div>
+    <span class="hero-outline" id="hero-outline">DEV.</span>
+    <div class="hero-peran" data-id="Seorang —" data-en="I am a —"> Seorang — <span class="diketik" id="diketik"></span></div>
+    <p class="hero-desc" data-id="Membangun pengalaman digital yang bermakna — dari baris kode pertama hingga production. Web yang cepat, aplikasi mobile yang intuitif, dan solusi kreatif untuk bisnis Indonesia." data-en="Building meaningful digital experiences — from the first line of code to production. Fast websites, smooth mobile apps, and creative solutions for your business.">Membangun pengalaman digital yang bermakna — dari baris kode pertama hingga production. Web yang cepat, aplikasi mobile yang intuitif, dan solusi kreatif untuk bisnis Indonesia.</p>
+    <div class="hero-aksi">
+      <a href="#portofolio" class="btn btn-utama">⚡ Lihat Karya</a>
+      <a href="#kalkulator" class="btn btn-ghost">🧮 Estimasi Harga</a>
+      <a href="#kontak" class="btn btn-ungu">📬 Hire Me</a>
+    </div>
+    <div class="hero-stat">
+      <div class="hs"><div class="hs-n"><span class="hitung" data-t="10" data-s="+">0</span></div><div class="hs-l">Proyek Selesai</div></div>
+      <div class="hs"><div class="hs-n"><span class="hitung" data-t="6" data-s="">0</span></div><div class="hs-l">Layanan</div></div>
+      <div class="hs"><div class="hs-n"><span class="hitung" data-t="100" data-s="%">0</span></div><div class="hs-l">Kepuasan</div></div>
+    </div>
+  </div>
+  <div class="hero-kanan">
+    <div class="holo" id="holo">
+      <div class="hp-bar"><div class="hp-dots"><div class="hp-dot hpd1"></div><div class="hp-dot hpd2"></div><div class="hp-dot hpd3"></div></div><div class="hp-badge">Tersedia sekarang</div></div>
+      <div class="hp-profil"><div class="hp-av">👨‍💻</div><div><div class="hp-nm">ADITYA</div><div class="hp-rl">Full Stack &amp; Mobile Developer</div></div></div>
+      <div class="hp-chips"><span class="chip">HTML/CSS</span><span class="chip">JavaScript</span><span class="chip">React</span><span class="chip">Android</span><span class="chip">iOS</span><span class="chip">Python</span><span class="chip">GitHub</span><span class="chip">Vercel</span></div>
+      <div class="hp-div"></div>
+      <div class="hp-info">
+        <div class="hp-row"><div class="hp-ico">📍</div><div><div class="hp-lb">Lokasi</div><div class="hp-vl">Indonesia 🇮🇩</div></div></div>
+        <div class="hp-row"><div class="hp-ico">🕐</div><div><div class="hp-lb">Jam Kerja</div><div class="hp-vl">Weekday 15:30–22:00 WIB</div></div></div>
+        <div class="hp-row"><div class="hp-ico">⚡</div><div><div class="hp-lb">Respons</div><div class="hp-vl">Biasanya &lt; 2 jam</div></div></div>
+        <div class="hp-row"><div class="hp-ico">⭐</div><div><div class="hp-lb">Rating</div><div class="hp-vl">5.0 / 5.0 (10 ulasan)</div></div></div>
+      </div>
+      <button class="hp-cv" id="btn-cv">⬇ Download CV / Portfolio</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══ MARQUEE ══ -->
+<div id="marquee"><div class="jalur-w"><div class="jalur">
+  <span class="mq">🌐 HTML5</span><span class="mq">🎨 CSS3</span><span class="mq">⚡ JavaScript</span><span class="mq">⚛️ React</span><span class="mq">🤖 Android</span><span class="mq">🍎 iOS Swift</span><span class="mq">🐍 Python</span><span class="mq">🔷 QR Design</span><span class="mq">▲ Vercel</span><span class="mq">🐙 GitHub</span><span class="mq">🗄️ MySQL</span><span class="mq">🎯 Figma</span><span class="mq">📦 GoNative</span><span class="mq">🌊 Netlify</span>
+  <span class="mq">🌐 HTML5</span><span class="mq">🎨 CSS3</span><span class="mq">⚡ JavaScript</span><span class="mq">⚛️ React</span><span class="mq">🤖 Android</span><span class="mq">🍎 iOS Swift</span><span class="mq">🐍 Python</span><span class="mq">🔷 QR Design</span><span class="mq">▲ Vercel</span><span class="mq">🐙 GitHub</span><span class="mq">🗄️ MySQL</span><span class="mq">🎯 Figma</span><span class="mq">📦 GoNative</span><span class="mq">🌊 Netlify</span>
+</div></div></div>
+
+<!-- ══ LAYANAN ══ -->
+<section class="sek" id="layanan">
+  <div class="si">
+    <div class="lay-header rv-c">
+      <div><div class="s-tag">Layanan</div><h2 class="s-judul">Apa yang bisa<br/>saya <em>bantu?</em></h2></div>
+      <p class="s-sub">Solusi digital lengkap dengan kualitas profesional. Pengerjaan cepat, komunikasi aktif, revisi hingga puas.</p>
+    </div>
+    <div class="lay-grid rv-c">
+      <div class="lay-k"><div class="lay-no">01 ——</div><div class="lay-ico">🌐</div><div class="lay-tit">Landing Page &amp; Website</div><div class="lay-des">Website responsif dan modern untuk bisnis, portofolio, atau toko online. Dioptimasi untuk kecepatan.</div><div class="lay-harga">Mulai Rp 75.000</div></div>
+      <div class="lay-k"><div class="lay-no">02 ——</div><div class="lay-ico">📱</div><div class="lay-tit">Aplikasi Android &amp; iOS</div><div class="lay-des">Aplikasi mobile native atau hybrid. Dari APK sederhana hingga fitur lengkap siap publish.</div><div class="lay-harga">Mulai Rp 200.000</div></div>
+      <div class="lay-k"><div class="lay-no">03 ——</div><div class="lay-ico">🔷</div><div class="lay-tit">QR Code Custom</div><div class="lay-des">QR code berdesain unik dengan logo dan warna brand kamu. Format PNG/SVG resolusi tinggi.</div><div class="lay-harga">Mulai Rp 15.000</div></div>
+      <div class="lay-k"><div class="lay-no">04 ——</div><div class="lay-ico">🐛</div><div class="lay-tit">Bug Fixing &amp; Optimasi</div><div class="lay-des">Debugging cepat dan tuntas. Termasuk optimasi performa, loading time, dan keamanan dasar.</div><div class="lay-harga">Mulai Rp 50.000</div></div>
+      <div class="lay-k"><div class="lay-no">05 ——</div><div class="lay-ico">📊</div><div class="lay-tit">Data Entry &amp; Scraping</div><div class="lay-des">Input data massal, rekap spreadsheet, atau otomatisasi web scraping menggunakan Python.</div><div class="lay-harga">Mulai Rp 30.000</div></div>
+      <div class="lay-k"><div class="lay-no">06 ——</div><div class="lay-ico">✍️</div><div class="lay-tit">Penulisan Konten</div><div class="lay-des">Artikel SEO, copywriting website, deskripsi produk, dan konten media sosial Bahasa Indonesia.</div><div class="lay-harga">Mulai Rp 25.000</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ KALKULATOR HARGA ══ -->
+<section class="sek" id="kalkulator">
+  <div class="si">
+    <div class="rv"><div class="s-tag">Kalkulator Harga</div><h2 class="s-judul">Estimasi <em>biaya proyek</em></h2><p class="s-sub">Pilih layanan yang kamu butuhkan dan dapatkan estimasi harga secara instan.</p></div>
+    <div class="kalk-grid">
+      <div class="rv">
+        <div class="kalk-form-wrap">
+          <div class="kalk-form-tit">Pilih Layanan</div>
+          <!-- Opsi layanan — dikelola JS -->
+          <div class="kalk-opsi" id="kalk-opsi"></div>
+          <div class="kalk-form-tit" style="margin-top:var(--sm);">Tingkat Kompleksitas</div>
+          <div class="kalk-slider-wrap">
+            <div class="kalk-slider-lbl"><span>Sederhana</span><span id="kalk-level-lbl">Sedang</span></div>
+            <input type="range" class="kalk-slider" id="kalk-slider" min="1" max="3" value="2" step="1"/>
+            <div class="kalk-tingkat-lbl"><span>Sederhana</span><span>Sedang</span><span>Kompleks</span></div>
+          </div>
+          <div class="kalk-form-tit" style="margin-top:var(--sm);">Fitur Tambahan</div>
+          <div class="kalk-fitur" id="kalk-fitur"></div>
+        </div>
+      </div>
+      <div class="rv">
+        <div class="kalk-hasil">
+          <div class="kalk-hasil-tit">📊 Estimasi Biaya</div>
+          <div class="kalk-rincian" id="kalk-rincian">
+            <div class="kalk-baris"><span class="kalk-baris-nm">Pilih layanan di kiri...</span><span class="kalk-baris-harga">—</span></div>
+          </div>
+          <div class="kalk-total-wrap">
+            <div class="kalk-total-lbl">Total Estimasi</div>
+            <div class="kalk-total-harga" id="kalk-total">Rp 0</div>
+            <div class="kalk-waktu">Estimasi waktu: <span id="kalk-waktu">—</span></div>
+          </div>
+          <button class="kalk-cta" onclick="document.getElementById('kontak').scrollIntoView({behavior:'smooth'})">💬 Diskusikan Proyek Ini →</button>
+          <p style="font-family:var(--fm);font-size:var(--fxs);color:var(--t3);margin-top:var(--ss);text-align:center;">* Harga estimasi. Harga final menyesuaikan kebutuhan spesifik.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PORTOFOLIO ══ -->
+<section class="sek" id="portofolio">
+  <div class="si">
+    <div class="rv"><div class="s-tag">Portofolio</div><h2 class="s-judul">Karya <em>pilihan</em></h2><p class="s-sub">Proyek nyata yang dibangun dan di-deploy ke production.</p></div>
+    <div class="porto-filter rv">
+      <button class="pf-btn aktif" data-filter="semua">Semua</button>
+      <button class="pf-btn" data-filter="web">Web</button>
+      <button class="pf-btn" data-filter="mobile">Mobile</button>
+      <button class="pf-btn" data-filter="desain">Desain</button>
+      <button class="pf-btn" data-filter="backend">Backend</button>
+    </div>
+    <div class="porto-grid">
+      <div class="pc g8 rv" data-kategori="web mobile" id="tilt1">
+        <div class="pc-thumb" style="background:linear-gradient(135deg,#010c1c,#042040,#063060);">🌾<div class="pc-scan"></div></div>
+        <div class="pc-isi">
+          <div class="pc-tags"><span class="pt th">IoT</span><span class="pt tc">Web</span><span class="pt tu">Mobile</span></div>
+          <div class="pc-tit">GENTANI_MARKER untuk monitoring sensor pertanian real-time. ThingSpeak, localStorage, dual deployment, APK via GoNative.</div>
+          <div class="pc-foot"><div class="pc-stack"><span>HTML</span><span>JS</span><span>ThingSpeak</span><span>GoNative</span></div><a href="https://gentaniman-2.vercel.app/" target="_blank" class="pc-link">Lihat →</a></div>
+        </div>
+      </div>
+      <div class="pc g4 rv" data-kategori="web desain" id="tilt2">
+        <div class="pc-thumb" style="background:linear-gradient(135deg,#0e0520,#200a40,#301560);">🎂<div class="pc-scan"></div></div>
+        <div class="pc-isi">
+          <div class="pc-tags"><span class="pt tu">Creative</span><span class="pt tc">Web</span></div>
+          <div class="pc-tit">Birthday Surprise Page</div>
+          <div class="pc-des">Halaman web interaktif beranimasi sebagai kejutan ulang tahun personal.</div>
+          <div class="pc-foot"><div class="pc-stack"><span>HTML</span><span>CSS</span><span>JS</span></div><a href="https://hbd-alpaaadytt.vercel.app/hbd.html" target="_blank" class="pc-link">Lihat →</a></div>
+        </div>
+      </div>
+      <div class="pc g6 rv" data-kategori="backend" id="tilt3">
+        <div class="pc-thumb" style="background:linear-gradient(135deg,#100520,#200a38,#2c1050);">🛒<div class="pc-scan"></div></div>
+        <div class="pc-isi">
+          <div class="pc-tags"><span class="pt tc">Database</span><span class="pt to">Backend</span></div>
+          <div class="pc-tit">E-Commerce PostgreSQL Schema</div>
+          <div class="pc-des">Skema database e-commerce lengkap: 12 tabel, UUID keys, inventori, sistem kupon.</div>
+          <div class="pc-foot"><div class="pc-stack"><span>PostgreSQL</span><span>UUID</span></div><a href="https://github.com/Aditya-909" target="_blank" class="pc-link">Segera Hadir →</a></div>
+        </div>
+      </div>
+      <div class="pc g6 rv" data-kategori="desain" id="tilt4">
+        <div class="pc-thumb" style="background:linear-gradient(135deg,#051505,#0a2a0a,#104015);">🔷<div class="pc-scan"></div></div>
+        <div class="pc-isi">
+          <div class="pc-tags"><span class="pt th">Design</span><span class="pt to">Python</span></div>
+          <div class="pc-tit">GEOFARMING QR Card</div>
+          <div class="pc-des">Generator kartu QR code bergaya dengan branding pertanian. Python/Pillow + HTML.</div>
+          <div class="pc-foot"><div class="pc-stack"><span>Python</span><span>Pillow</span></div><a href="https://raw.githubusercontent.com/Aditya-909/assets/main/qr-final.jpg" target="_blank" class="pc-link">Lihat Gambar →</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TIMELINE ══ -->
+<section class="sek" id="timeline">
+  <div class="si">
+    <div class="rv"><div class="s-tag">Timeline</div><h2 class="s-judul">Perjalanan <em>saya</em></h2><p class="s-sub">Dari penasaran menjadi developer yang siap bekerja profesional.</p></div>
+    <div class="tl-wrap rv">
+      <div class="tl-item">
+        <div class="tl-tahun">2022</div>
+        <div class="tl-judul">Mulai Belajar Coding</div>
+        <div class="tl-sub">SMA — Autodidak</div>
+        <div class="tl-des">Memulai perjalanan coding dari rasa penasaran. Belajar HTML, CSS, dan JavaScript dasar secara otodidak melalui YouTube dan dokumentasi online.</div>
+        <div class="tl-tags"><span class="tl-tag">HTML</span><span class="tl-tag">CSS</span><span class="tl-tag">JavaScript</span></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-tahun">2023</div>
+        <div class="tl-judul">Ekspansi ke Mobile Development</div>
+        <div class="tl-sub">Android Studio, Python</div>
+        <div class="tl-des">Mempelajari pengembangan aplikasi Android dan mulai menggunakan Python untuk otomatisasi. Membuat project pertama yang bisa digunakan orang lain.</div>
+        <div class="tl-tags"><span class="tl-tag">Android</span><span class="tl-tag">Python</span><span class="tl-tag">Java</span></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-tahun">2023 — 2024</div>
+        <div class="tl-judul">Proyek GENTANI IoT</div>
+        <div class="tl-sub">Proyek Pertanian Cerdas</div>
+        <div class="tl-des">Membangun aplikasi IoT lengkap untuk monitoring pertanian. Pertama kali deploy ke production dengan dual deployment GitHub Pages dan Netlify.</div>
+        <div class="tl-tags"><span class="tl-tag">IoT</span><span class="tl-tag">ThingSpeak</span><span class="tl-tag">GoNative</span><span class="tl-tag">APK</span></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-tahun">2024</div>
+        <div class="tl-judul">Membuka Layanan Freelance</div>
+        <div class="tl-sub">Lynkid, Fastwork, Sribulancer</div>
+        <div class="tl-des">Mulai menawarkan jasa secara profesional di platform freelance Indonesia. Mengembangkan portofolio dan membangun reputasi sebagai developer muda yang terpercaya.</div>
+        <div class="tl-tags"><span class="tl-tag">Freelance</span><span class="tl-tag">Lynkid</span><span class="tl-tag">Full Stack</span></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-tahun">Sekarang</div>
+        <div class="tl-judul">Terus Berkembang</div>
+        <div class="tl-sub">React, iOS, PostgreSQL</div>
+        <div class="tl-des">Aktif mempelajari teknologi baru, mengerjakan proyek klien, dan terus mengasah skill untuk memberikan hasil terbaik bagi setiap klien.</div>
+        <div class="tl-tags"><span class="tl-tag">React</span><span class="tl-tag">iOS</span><span class="tl-tag">PostgreSQL</span><span class="tl-tag">Learning</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TENTANG ══ -->
+<section class="sek" id="tentang">
+  <div class="si">
+    <div class="rv"><div class="s-tag">Tentang Saya</div><h2 class="s-judul">Siapa <em>saya?</em></h2></div>
+    <div class="tent-grid">
+      <div class="rv">
+        <h3 class="tent-h3">Developer muda,<br/><em>semangat tanpa batas</em></h3>
+        <p class="tent-p">Saya adalah pelajar SMA di Indonesia yang jatuh cinta dengan dunia pemrograman. Memulai dari rasa penasaran, berkembang menjadi keahlian nyata yang memberikan nilai bagi orang lain.</p>
+        <p class="tent-p">Setiap proyek dikerjakan dengan standar tinggi — kode bersih, struktur solid, dan hasil yang membuat klien bangga.</p>
+        <ul class="fakta">
+          <li>Aktif di GitHub: <strong style="color:var(--neon);">Aditya-909</strong></li>
+          <li>Platform: Lynkid, Fastwork, Sribulancer</li>
+          <li>Tersedia Senin–Jumat: 15:30 – 22:00 WIB</li>
+          <li>Tersedia Sabtu–Minggu: 08:00 – 22:00 WIB</li>
+          <li>Deploy: GitHub Pages, Vercel, Netlify</li>
+          <li>Revisi hingga puas di setiap paket</li>
+        </ul>
+      </div>
+      <div class="skill-grid rv" id="skill-wadah">
+        <div><div class="sk-h"><span>HTML / CSS</span><span class="sk-p">90%</span></div><div class="sk-t"><div class="sk-i" data-w=".90"></div></div></div>
+        <div><div class="sk-h"><span>JavaScript</span><span class="sk-p">80%</span></div><div class="sk-t"><div class="sk-i" data-w=".80"></div></div></div>
+        <div><div class="sk-h"><span>Android Development</span><span class="sk-p">75%</span></div><div class="sk-t"><div class="sk-i" data-w=".75"></div></div></div>
+        <div><div class="sk-h"><span>React</span><span class="sk-p">70%</span></div><div class="sk-t"><div class="sk-i" data-w=".70"></div></div></div>
+        <div><div class="sk-h"><span>Python</span><span class="sk-p">68%</span></div><div class="sk-t"><div class="sk-i" data-w=".68"></div></div></div>
+        <div><div class="sk-h"><span>iOS / Swift</span><span class="sk-p">55%</span></div><div class="sk-t"><div class="sk-i" data-w=".55"></div></div></div>
+        <div><div class="sk-h"><span>UI/UX Design</span><span class="sk-p">65%</span></div><div class="sk-t"><div class="sk-i" data-w=".65"></div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TESTIMONIAL ══ -->
+<section class="sek" id="testimonial">
+  <div class="si">
+    <div class="rv"><div class="s-tag">Testimoni</div><h2 class="s-judul">Kata <em>klien</em></h2><p class="s-sub">Apa yang klien katakan tentang pengalaman bekerja bersama saya.</p></div>
+    <div class="testi-slider rv">
+      <div class="testi-track" id="testi-track">
+        <div class="testi-kartu">
+          <div class="testi-bintang"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+          <div class="testi-kutip">"</div>
+          <div class="testi-teks">Sangat puas dengan hasilnya! Website yang dibuat Aditya tampil profesional dan loading sangat cepat. Komunikasi juga responsif dan pengerjaan tepat waktu.</div>
+          <div class="testi-profil">
+            <div class="testi-av">🏪</div>
+            <div><div class="testi-nm">Bu Sarah</div><div class="testi-pos">Pemilik Toko Online, Jakarta</div></div>
+          </div>
+        </div>
+        <div class="testi-kartu">
+          <div class="testi-bintang"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+          <div class="testi-kutip">"</div>
+          <div class="testi-teks">Aplikasi Android yang dibuat sesuai ekspektasi bahkan melebihi. Bug fixing cepat banget, baru order langsung dikerjain. Recommended banget!</div>
+          <div class="testi-profil">
+            <div class="testi-av">📱</div>
+            <div><div class="testi-nm">Pak Deni</div><div class="testi-pos">Startup Founder, Bandung</div></div>
+          </div>
+        </div>
+        <div class="testi-kartu">
+          <div class="testi-bintang"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+          <div class="testi-kutip">"</div>
+          <div class="testi-teks">QR code yang dibuat sangat kreatif dan branded. Cocok banget untuk kebutuhan acara kami. Harga juga sangat terjangkau untuk kualitas sebagus ini.</div>
+          <div class="testi-profil">
+            <div class="testi-av">🎪</div>
+            <div><div class="testi-nm">Kak Rina</div><div class="testi-pos">Event Organizer, Surabaya</div></div>
+          </div>
+        </div>
+        <div class="testi-kartu">
+          <div class="testi-bintang"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+          <div class="testi-kutip">"</div>
+          <div class="testi-teks">Data entry yang rapi dan akurat. Pekerjaan selesai lebih cepat dari deadline yang ditetapkan. Pasti akan order lagi untuk proyek berikutnya!</div>
+          <div class="testi-profil">
+            <div class="testi-av">📊</div>
+            <div><div class="testi-nm">Mas Budi</div><div class="testi-pos">Manajer Operasional, Semarang</div></div>
+          </div>
+        </div>
+        <div class="testi-kartu">
+          <div class="testi-bintang"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+          <div class="testi-kutip">"</div>
+          <div class="testi-teks">Artikel yang ditulis sangat berkualitas dan SEO-friendly. Traffic website kami meningkat signifikan setelah menggunakan konten yang dibuat Aditya.</div>
+          <div class="testi-profil">
+            <div class="testi-av">✍️</div>
+            <div><div class="testi-nm">Mbak Citra</div><div class="testi-pos">Digital Marketing, Yogyakarta</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-nav">
+        <button class="tn-btn" id="tn-prev">←</button>
+        <div class="testi-dots" id="testi-dots"></div>
+        <button class="tn-btn" id="tn-next">→</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FAQ ══ -->
+<section class="sek" id="faq">
+  <div class="si">
+    <div class="faq-grid">
+      <div class="faq-header rv">
+        <div class="s-tag">FAQ</div>
+        <h2 class="s-judul">Pertanyaan<br/><em>umum</em></h2>
+        <p class="s-sub" style="margin-top:var(--ss);">Jawaban atas pertanyaan yang paling sering ditanyakan klien.</p>
+      </div>
+      <div class="faq-list rv" id="faq-kiri"></div>
+      <div class="faq-list rv" id="faq-kanan"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ KONTAK ══ -->
+<section class="sek" id="kontak">
+  <div class="si">
+    <div class="rv"><div class="s-tag">Kontak</div><h2 class="s-judul">Ada proyek?<br/><em>Mari ngobrol.</em></h2></div>
+    <div class="kon-grid">
+      <div class="rv">
+        <h3 class="kon-h3">Siap membantu<br/><em>kapanpun kamu butuh</em></h3>
+        <p class="kon-p">Konsultasi gratis, tanpa biaya tersembunyi. Ceritakan kebutuhanmu dan saya berikan solusi terbaik sesuai anggaran kamu.</p>
+        <div class="kon-list">
+          <a href="https://wa.me/6285136500428" class="kon-br" target="_blank"><div class="kon-ico">💬</div><div><div class="kon-lb">WhatsApp</div><div class="kon-vl">+62 851-3650-0428</div></div></a>
+          <div class="kon-br" style="cursor:default;">
+            <div class="kon-ico">✉️</div>
+            <div style="flex:1"><div class="kon-lb">Email</div><div class="kon-vl"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4a2b2e233e332b0a2f272b232664292527">[email&#160;protected]</a></div></div>
+            <button class="btn-copy" onclick="salinEmail()" title="Salin email">📋 Salin</button>
+          </div>
+          <a href="https://github.com/Aditya-909" class="kon-br" target="_blank"><div class="kon-ico">🐙</div><div><div class="kon-lb">GitHub</div><div class="kon-vl">github.com/Aditya-909</div></div></a>
+          <a href="https://lynk.id/adityakusumadinata" class="kon-br" target="_blank"><div class="kon-ico">🛒</div><div><div class="kon-lb">Lynkid Store</div><div class="kon-vl">Produk digital siap pakai</div></div></a>
+        </div>
+      </div>
+      <div class="form-box rv">
+        <div class="form-tit">Kirim Pesan</div>
+        <div class="form-row">
+          <div class="gi"><label>Nama Lengkap</label><input type="text" id="f-nama" placeholder="Nama kamu"/></div>
+          <div class="gi"><label>Email</label><input type="email" id="f-email" placeholder="email@kamu.com"/></div>
+        </div>
+        <div class="gi"><label>Jenis Layanan</label>
+          <select id="f-layanan"><option value="" disabled selected>Pilih layanan...</option><option>Landing Page / Website</option><option>Aplikasi Android / iOS</option><option>QR Code Custom</option><option>Bug Fixing &amp; Optimasi</option><option>Data Entry &amp; Scraping</option><option>Penulisan Konten</option><option>Lainnya...</option></select>
+        </div>
+        <div class="gi"><label>Anggaran</label><input type="text" id="f-anggaran" placeholder="Contoh: Rp 150.000 – Rp 300.000"/></div>
+        <div class="gi"><label>Ceritakan Proyekmu</label><textarea id="f-pesan" placeholder="Deskripsikan kebutuhanmu..."></textarea></div>
+        <button class="btn-kirim" id="btn-kirim">Kirim Pesan →</button>
+        <div class="form-note">⚡ Biasanya saya balas dalam &lt; 2 jam di jam aktif</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <a href="#" class="f-logo">ADITYA</a>
+  <div class="f-mid">© 2024 Aditya · Dibuat dengan ☕ &amp; dedikasi · Indonesia 🇮🇩</div>
+  <div class="f-links">
+    <a href="https://github.com/Aditya-909" target="_blank">GitHub</a>
+    <a href="https://wa.me/6285136500428" target="_blank">WhatsApp</a>
+    <a href="https://lynk.id/adityakusumadinata" target="_blank">Lynkid</a>
+  </div>
+</footer><script>
+/* ╔═══════════════════════════════════════════════════════════╗
+   ║  ENGINE JAVASCRIPT — PORTOFOLIO ULTIMATE                 ║
+   ║  16 Modul · Bahasa Indonesia · Semua Fungsional          ║
+   ╚═══════════════════════════════════════════════════════════╝ */
+
+/* ════════════════════════════
+   M1: INTRO TERMINAL
+════════════════════════════ */
+(function modulIntro() {
+  var baris = document.querySelectorAll('.tbaris');
+  var bilah = document.getElementById('intro-bar');
+  var elPc  = document.getElementById('intro-pc');
+  var elSt  = document.getElementById('intro-st');
+  var elInt = document.getElementById('intro');
+  var persen = 0, ib = 0;
+  var pesan = ['menginisialisasi...','memuat fitur...','menghubungkan neural...','menyiapkan kalkulator...','siap!'];
+  var ip = 0;
+  function tampil() { if (ib < baris.length) { baris[ib].classList.add('on'); ib++; setTimeout(tampil, 200 + Math.random()*150); } }
+  setTimeout(tampil, 200);
+  var iv = setInterval(function() {
+    var t = persen < 65 ? Math.random()*5+3 : persen < 90 ? Math.random()*2+1 : Math.random()*.8+.2;
+    persen = Math.min(persen+t, 100);
+    bilah.style.width = persen + '%';
+    elPc.textContent = Math.floor(persen) + '%';
+    var np = Math.floor(persen/100*pesan.length);
+    if (np !== ip && np < pesan.length) { ip = np; elSt.textContent = pesan[ip]; }
+    if (persen >= 100) { clearInterval(iv); setTimeout(function() { elInt.classList.add('keluar'); }, 500); }
+  }, 42);
+})();
+
+/* ════════════════════════════
+   M2: TOAST SISTEM
+   Bisa dipanggil dari mana saja
+════════════════════════════ */
+window.tampilToast = function(pesan, tipe, ikon) {
+  var wrap = document.getElementById('toast-wrap');
+  var toast = document.createElement('div');
+  toast.className = 'toast ' + (tipe || '');
+  toast.innerHTML = '<span class="toast-ikon">' + (ikon || '💬') + '</span><span class="toast-teks">' + pesan + '</span><button class="toast-tutup" onclick="this.parentElement.remove()">✕</button>';
+  wrap.appendChild(toast);
+  setTimeout(function() { toast.classList.add('keluar'); setTimeout(function() { if (toast.parentElement) toast.remove(); }, 400); }, 4000);
+};
+
+/* ════════════════════════════
+   M3: KURSOR (Desktop only)
+════════════════════════════ */
+(function modulKursor() {
+  if (!window.matchMedia('(pointer:fine)').matches) return;
+  var t = document.getElementById('kursor'), r = document.getElementById('kursor-ring');
+  if (!t || !r) return;
+  var mX=0,mY=0,cX=0,cY=0;
+  document.addEventListener('mousemove', function(e) { mX=e.clientX; mY=e.clientY; t.style.left=mX+'px'; t.style.top=mY+'px'; });
+  (function l(){ cX+=(mX-cX)*.1; cY+=(mY-cY)*.1; r.style.left=cX+'px'; r.style.top=cY+'px'; requestAnimationFrame(l); })();
+  document.querySelectorAll('a,button,.pc,.lay-k,.chip,.holo,.faq-item,.testi-kartu,.kalk-item,.kalk-toggle').forEach(function(el) {
+    el.addEventListener('mouseenter', function(){ document.body.classList.add('kh'); });
+    el.addEventListener('mouseleave', function(){ document.body.classList.remove('kh'); });
+  });
+})();
+
+/* ════════════════════════════
+   M4: NEURAL NETWORK
+════════════════════════════ */
+(function modulNeural() {
+  var c = document.getElementById('neural'); if (!c) return;
+  var ctx = c.getContext('2d'), W, H, mX, mY;
+  function sz() { W=c.width=window.innerWidth; H=c.height=window.innerHeight; mX=W/2; mY=H/2; }
+  sz(); window.addEventListener('resize', sz);
+  document.addEventListener('mousemove', function(e){ mX=e.clientX; mY=e.clientY; });
+  document.addEventListener('touchmove', function(e){ if(e.touches[0]){mX=e.touches[0].clientX;mY=e.touches[0].clientY;} },{passive:true});
+  var n = Math.max(25, Math.min(Math.floor(window.innerWidth*window.innerHeight/16000), 80));
+  var nd = [];
+  for (var i=0;i<n;i++) nd.push({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.4+.4});
+  var J = 120;
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    nd.forEach(function(p){
+      var dx=p.x-mX,dy=p.y-mY,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<100&&d>0){var f=(1-d/100)*1.2;p.vx+=(dx/d)*f*.06;p.vy+=(dy/d)*f*.06;}
+      p.x+=p.vx;p.y+=p.vy;p.vx*=.98;p.vy*=.98;
+      if(Math.abs(p.vx)<.07)p.vx+=(Math.random()-.5)*.07;
+      if(Math.abs(p.vy)<.07)p.vy+=(Math.random()-.5)*.07;
+      if(p.x<0){p.x=0;p.vx=Math.abs(p.vx);}if(p.x>W){p.x=W;p.vx=-Math.abs(p.vx);}
+      if(p.y<0){p.y=0;p.vy=Math.abs(p.vy);}if(p.y>H){p.y=H;p.vy=-Math.abs(p.vy);}
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(0,255,204,.4)';ctx.fill();
+    });
+    for(var i=0;i<nd.length;i++)for(var j=i+1;j<nd.length;j++){
+      var dx=nd[i].x-nd[j].x,dy=nd[i].y-nd[j].y,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<J){ctx.beginPath();ctx.moveTo(nd[i].x,nd[i].y);ctx.lineTo(nd[j].x,nd[j].y);ctx.strokeStyle='rgba(0,255,204,'+(1-d/J)*.18+')';ctx.lineWidth=.5;ctx.stroke();}
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ════════════════════════════
+   M5: NAMA HERO + GLITCH
+════════════════════════════ */
+(function modulNama() {
+  var el = document.getElementById('hero-nama'); if (!el) return;
+  var t = el.textContent; el.textContent = '';
+  t.split('').forEach(function(k,i){
+    var s = document.createElement('span');
+    s.textContent = k; s.className = 'huruf';
+    s.style.animationDelay = (.5+i*.09)+'s';
+    if (window.matchMedia('(pointer:fine)').matches) {
+      setInterval(function(){
+        if(Math.random()>.96){s.style.textShadow='2px 0 var(--neon),-2px 0 var(--merah)';s.style.transform='translateY('+(Math.random()*3-1.5)+'px)';setTimeout(function(){s.style.textShadow='';s.style.transform='';},70);}
+      }, 1500+i*400);
+    }
+    el.appendChild(s);
+  });
+})();
+
+/* ════════════════════════════
+   M6: TYPED TEXT
+════════════════════════════ */
+(function modulDiketik() {
+  var el = document.getElementById('diketik'); if (!el) return;
+  var d = ['Full Stack Developer','Mobile App Developer','UI/UX Enthusiast','Freelancer Indonesia'];
+  var i=0,c=0,h=false;
+  function k(){
+    var w=d[i];
+    if(!h){el.textContent=w.slice(0,++c);if(c===w.length){h=true;setTimeout(k,2000);return;}}
+    else{el.textContent=w.slice(0,--c);if(c===0){h=false;i=(i+1)%d.length;}}
+    setTimeout(k,h?48:80);
+  }
+  setTimeout(k, 2500);
+})();
+
+/* ════════════════════════════
+   M7: TOGGLE TEMA TERANG/GELAP
+════════════════════════════ */
+(function modulTema() {
+  var btn = document.getElementById('btn-tema');
+  var tema = localStorage.getItem('tema') || 'gelap';
+  function terapkan(t){
+    document.documentElement.setAttribute('data-tema', t);
+    btn.textContent = t==='gelap' ? '🌙' : '☀️';
+    localStorage.setItem('tema', t);
+  }
+  terapkan(tema);
+  btn.addEventListener('click', function(e){
+    e.stopPropagation(); /* Cegah trigger tutup drawer */
+    var baru = document.documentElement.getAttribute('data-tema') === 'gelap' ? 'terang' : 'gelap';
+    terapkan(baru);
+    tampilToast('Tema ' + (baru==='gelap'?'Gelap':'Terang') + ' diaktifkan', '', baru==='gelap'?'🌙':'☀️');
+  });
+})();
+
+/* ════════════════════════════
+   M8: TOGGLE BAHASA ID/EN
+════════════════════════════ */
+(function modulBahasa() {
+  var btn  = document.getElementById('btn-lang');
+  var lang = 'id'; /* Status bahasa saat ini */
+  var simpanTeks = {}; /* Menyimpan teks asli setiap node */
+  var idCounter  = 0;  /* ID unik untuk setiap text node */
+
+  /* ════════════════════════════════════════════════════
+     KAMUS LENGKAP — Setiap teks di halaman
+     Format: 'Teks Indonesia': 'English Text'
+  ════════════════════════════════════════════════════ */
+  var KAMUS = {
+    /* ── Intro terminal ── */
+    'Memuat desain sistem...':              'Loading design system...',
+    'Mengkompilasi neural shader...':       'Compiling neural shaders...',
+    'Menyiapkan kalkulator harga...':       'Setting up price calculator...',
+    'Menghubungkan jaring sinaptik...':     'Connecting synaptic network...',
+    'Memuat 8 fitur interaktif...':         'Loading 8 interactive features...',
+    'Semua sistem operasional':             'All systems operational',
+    'menginisialisasi...':                  'initializing...',
+    /* ── Badge & Float ── */
+    '🟢 Tersedia untuk proyek baru':        '🟢 Available for new projects',
+    '● Online sekarang':                    '● Online now',
+    'Halo! 👋 Ada yang bisa saya bantu? Pilih topik yang kamu butuhkan:':
+      'Hello! 👋 How can I help? Choose a topic:',
+    '💬 Chat via WhatsApp':                '💬 Chat via WhatsApp',
+    '🧮 Cek estimasi harga':               '🧮 Check price estimate',
+    '📁 Lihat portofolio':                 '📁 View portfolio',
+    '❓ Lihat FAQ':                        '❓ View FAQ',
+    /* ── Navigasi ── */
+    'Layanan':                             'Services',
+    'Kalkulator':                          'Calculator',
+    'Portofolio':                          'Portfolio',
+    'Timeline':                            'Timeline',
+    'Testimoni':                           'Testimonials',
+    'FAQ':                                 'FAQ',
+    'Kontak':                              'Contact',
+    'Hire Me →':                           'Hire Me →',
+    /* ── Drawer ── */
+    'Kalkulator Harga':                    'Price Calculator',
+    /* ── Hero ── */
+    'Tersedia untuk Proyek Baru · 2024':   'Available for New Projects · 2024',
+    'Seorang —':                           'I am a —',
+    'Membangun pengalaman digital yang bermakna — dari baris kode pertama hingga production. Web yang cepat, aplikasi mobile yang intuitif, dan solusi kreatif untuk bisnis Indonesia.':
+      'Building meaningful digital experiences — from the first line of code to production. Fast websites, smooth mobile apps, and creative solutions for your business.',
+    '⚡ Lihat Karya':                      '⚡ View My Work',
+    '🧮 Estimasi Harga':                   '🧮 Price Estimate',
+    '📬 Hire Me':                          '📬 Hire Me',
+    'Proyek Selesai':                      'Projects Done',
+    'Layanan Aktif':                       'Active Services',
+    'Kepuasan':                            'Satisfaction',
+    /* ── Panel profil ── */
+    'Tersedia sekarang':                   'Available now',
+    'Full Stack & Mobile Developer':       'Full Stack & Mobile Developer',
+    'Lokasi':                              'Location',
+    'Indonesia 🇮🇩':                       'Indonesia 🇮🇩',
+    'Jam Kerja':                           'Working Hours',
+    'Weekday 15:30–22:00 WIB':             'Weekday 15:30–22:00 WIB',
+    'Respons':                             'Response',
+    'Biasanya < 2 jam':                    'Usually < 2 hours',
+    'Rating':                              'Rating',
+    '5.0 / 5.0 (10 ulasan)':              '5.0 / 5.0 (10 reviews)',
+    '⬇ Download CV / Portfolio':           '⬇ Download CV / Portfolio',
+    '💬 Kirim Pesan WhatsApp →':           '💬 Send WhatsApp Message →',
+    /* ── Section: Layanan ── */
+    'Apa yang bisa':                       'What can',
+    'bantu?':                              'I help with?',
+    'Solusi digital lengkap dengan kualitas profesional. Pengerjaan cepat, komunikasi aktif, revisi hingga puas.':
+      'Complete digital solutions with professional quality. Fast delivery, active communication, revisions until satisfied.',
+    'Landing Page & Website':              'Landing Page & Website',
+    'Website responsif dan modern untuk bisnis, portofolio, atau toko online. Dioptimasi untuk kecepatan.':
+      'Responsive and modern website for business, portfolio, or online store. Optimized for speed.',
+    'Mulai Rp 75.000':                     'Starting Rp 75,000',
+    'Aplikasi Android & iOS':              'Android & iOS App',
+    'Aplikasi mobile native atau hybrid. Dari APK sederhana hingga fitur lengkap siap publish.':
+      'Native or hybrid mobile app. From simple APK to full-featured app ready to publish.',
+    'Mulai Rp 200.000':                    'Starting Rp 200,000',
+    'QR Code Custom':                      'Custom QR Code',
+    'QR code berdesain unik dengan logo dan warna brand kamu. Format PNG/SVG resolusi tinggi.':
+      'Uniquely designed QR code with your logo and brand colors. High-resolution PNG/SVG format.',
+    'Mulai Rp 15.000':                     'Starting Rp 15,000',
+    'Bug Fixing & Optimasi':               'Bug Fixing & Optimization',
+    'Debugging cepat dan tuntas. Termasuk optimasi performa, loading time, dan keamanan dasar.':
+      'Fast and thorough debugging. Including performance, loading time, and basic security optimization.',
+    'Mulai Rp 50.000':                     'Starting Rp 50,000',
+    'Data Entry & Scraping':               'Data Entry & Scraping',
+    'Input data massal, rekap spreadsheet, atau otomatisasi web scraping menggunakan Python.':
+      'Bulk data entry, spreadsheet recap, or web scraping automation using Python.',
+    'Mulai Rp 30.000':                     'Starting Rp 30,000',
+    'Penulisan Konten':                    'Content Writing',
+    'Artikel SEO, copywriting website, deskripsi produk, dan konten media sosial Bahasa Indonesia.':
+      'SEO articles, website copywriting, product descriptions, and social media content.',
+    'Mulai Rp 25.000':                     'Starting Rp 25,000',
+    /* ── Section: Kalkulator ── */
+    'Estimasi':                            'Estimate',
+    'biaya proyek':                        'project cost',
+    'Pilih layanan yang kamu butuhkan dan dapatkan estimasi harga secara instan.':
+      'Select the services you need and get an instant price estimate.',
+    'Pilih Layanan':                       'Select Service',
+    'Tingkat Kompleksitas':                'Complexity Level',
+    'Sederhana':                           'Simple',
+    'Sedang':                              'Medium',
+    'Kompleks':                            'Complex',
+    'Fitur Tambahan':                      'Add-ons',
+    '📊 Estimasi Biaya':                   '📊 Cost Estimate',
+    'Pilih layanan di kiri...':            'Select a service on the left...',
+    'Total Estimasi':                      'Total Estimate',
+    'Estimasi waktu:':                     'Est. time:',
+    '💬 Diskusikan Proyek Ini →':          '💬 Discuss This Project →',
+    '* Harga estimasi. Harga final menyesuaikan kebutuhan spesifik.':
+      '* Estimated price. Final price depends on specific requirements.',
+    /* ── Kalkulator item ── */
+    'Landing Page & Website':             'Landing Page & Website',
+    'mulai Rp 75.000':                    'from Rp 75,000',
+    'mulai Rp 200.000':                   'from Rp 200,000',
+    'mulai Rp 15.000':                    'from Rp 15,000',
+    'mulai Rp 50.000':                    'from Rp 50,000',
+    'mulai Rp 30.000':                    'from Rp 30,000',
+    'mulai Rp 25.000':                    'from Rp 25,000',
+    /* ── Kalkulator fitur tambahan ── */
+    'Revisi Tak Terbatas':                 'Unlimited Revisions',
+    'Garansi 30 Hari':                     '30-Day Guarantee',
+    'Optimasi Mobile Extra':               'Extra Mobile Optimization',
+    'Optimasi SEO Dasar':                  'Basic SEO Optimization',
+    'Pengerjaan Kilat (2x cepat)':         'Rush Order (2x faster)',
+    /* ── Portofolio ── */
+    'Karya':                               'Selected',
+    'pilihan':                             'Works',
+    'Proyek nyata yang dibangun dan di-deploy ke production.':
+      'Real projects built and deployed to production.',
+    'Semua':                               'All',
+    'Web':                                 'Web',
+    'Mobile':                              'Mobile',
+    'Desain':                              'Design',
+    'Backend':                             'Backend',
+    'GENTANI — Sistem Pertanian Cerdas':   'GENTANI — Smart Farming System',
+    'Aplikasi web & Android berbasis IoT untuk monitoring sensor pertanian real-time. ThingSpeak, localStorage, dual deployment, APK via GoNative.':
+      'IoT-based web & Android app for real-time farm sensor monitoring. ThingSpeak, localStorage, dual deployment, APK via GoNative.',
+    'Lihat →':                             'View →',
+    'Birthday Surprise Page':              'Birthday Surprise Page',
+    'Halaman web interaktif beranimasi sebagai kejutan ulang tahun personal.':
+      'Interactive animated web page as a personal birthday surprise.',
+    'E-Commerce PostgreSQL Schema':        'E-Commerce PostgreSQL Schema',
+    'Skema database e-commerce lengkap: 12 tabel, UUID keys, inventori, sistem kupon.':
+      'Complete e-commerce database schema: 12 tables, UUID keys, inventory, coupon system.',
+    'GEOFARMING QR Card':                  'GEOFARMING QR Card',
+    'Generator kartu QR code bergaya dengan branding pertanian. Python/Pillow + HTML.':
+      'Styled QR code card generator with farming branding. Python/Pillow + HTML.',
+    /* ── Timeline ── */
+    'Perjalanan':                          'My',
+    'saya':                                'Journey',
+    'Dari penasaran menjadi developer yang siap bekerja profesional.':
+      'From curiosity to a developer ready to work professionally.',
+    'Mulai Belajar Coding':                'Started Learning to Code',
+    'SMA — Autodidak':                     'High School — Self-taught',
+    'Memulai perjalanan coding dari rasa penasaran. Belajar HTML, CSS, dan JavaScript dasar secara otodidak melalui YouTube dan dokumentasi online.':
+      'Started the coding journey out of curiosity. Learned basic HTML, CSS, and JavaScript self-taught through YouTube and online documentation.',
+    'Ekspansi ke Mobile Development':      'Expanded to Mobile Development',
+    'Android Studio, Python':              'Android Studio, Python',
+    'Mempelajari pengembangan aplikasi Android dan mulai menggunakan Python untuk otomatisasi. Membuat project pertama yang bisa digunakan orang lain.':
+      'Learned Android app development and started using Python for automation. Built the first project usable by others.',
+    'Proyek GENTANI IoT':                  'GENTANI IoT Project',
+    'Proyek Pertanian Cerdas':             'Smart Farming Project',
+    'Membangun aplikasi IoT lengkap untuk monitoring pertanian. Pertama kali deploy ke production dengan dual deployment GitHub Pages dan Netlify.':
+      'Built a complete IoT app for farm monitoring. First time deploying to production with dual deployment on GitHub Pages and Netlify.',
+    'Membuka Layanan Freelance':           'Opened Freelance Services',
+    'Lynkid, Fastwork, Sribulancer':       'Lynkid, Fastwork, Sribulancer',
+    'Mulai menawarkan jasa secara profesional di platform freelance Indonesia. Mengembangkan portofolio dan membangun reputasi sebagai developer muda yang terpercaya.':
+      'Started offering services professionally on Indonesian freelance platforms. Built a portfolio and reputation as a trusted young developer.',
+    'Terus Berkembang':                    'Continuously Growing',
+    'React, iOS, PostgreSQL':              'React, iOS, PostgreSQL',
+    'Aktif mempelajari teknologi baru, mengerjakan proyek klien, dan terus mengasah skill untuk memberikan hasil terbaik bagi setiap klien.':
+      'Actively learning new technologies, working on client projects, and continuously honing skills to deliver the best results for every client.',
+    'Sekarang':                            'Now',
+    /* ── Tentang ── */
+    'Tentang Saya':                        'About Me',
+    'Siapa':                               'Who',
+    'saya?':                               'am I?',
+    'Developer muda,':                     'Young developer,',
+    'semangat tanpa batas':                'limitless passion',
+    'Saya adalah pelajar SMA di Indonesia yang jatuh cinta dengan dunia pemrograman. Memulai dari rasa penasaran, berkembang menjadi keahlian nyata yang memberikan nilai bagi orang lain.':
+      'I am a high school student in Indonesia who fell in love with programming. Starting from curiosity, grew into real skills that provide value to others.',
+    'Setiap proyek dikerjakan dengan standar tinggi — kode bersih, struktur solid, dan hasil yang membuat klien bangga.':
+      'Every project is done with high standards — clean code, solid structure, and results that make clients proud.',
+    'Aktif di GitHub:':                    'Active on GitHub:',
+    'Platform: Lynkid, Fastwork, Sribulancer': 'Platform: Lynkid, Fastwork, Sribulancer',
+    'Tersedia Senin–Jumat: 15:30 – 22:00 WIB':  'Available Mon–Fri: 15:30 – 22:00 WIB',
+    'Tersedia Sabtu–Minggu: 08:00 – 22:00 WIB': 'Available Sat–Sun: 08:00 – 22:00 WIB',
+    'Deploy: GitHub Pages, Vercel, Netlify':     'Deploy: GitHub Pages, Vercel, Netlify',
+    'Revisi hingga puas di setiap paket':        'Revisions until satisfied in every package',
+    'HTML / CSS':                          'HTML / CSS',
+    'Android Development':                 'Android Development',
+    'iOS / Swift':                         'iOS / Swift',
+    'UI/UX Design':                        'UI/UX Design',
+    /* ── Testimoni ── */
+    'Kata':                                'What',
+    'klien':                               'Clients Say',
+    'Apa yang klien katakan tentang pengalaman bekerja bersama saya.':
+      'What clients say about working with me.',
+    'Sangat puas dengan hasilnya! Website yang dibuat Aditya tampil profesional dan loading sangat cepat. Komunikasi juga responsif dan pengerjaan tepat waktu.':
+      'Very satisfied with the results! Aditya\'s website looks professional with very fast loading. Communication was responsive and delivered on time.',
+    'Pemilik Toko Online, Jakarta':        'Online Shop Owner, Jakarta',
+    'Aplikasi Android yang dibuat sesuai ekspektasi bahkan melebihi. Bug fixing cepat banget, baru order langsung dikerjain. Recommended banget!':
+      'The Android app exceeded expectations. Bug fixing was super fast, ordered and immediately started. Highly recommended!',
+    'Startup Founder, Bandung':            'Startup Founder, Bandung',
+    'QR code yang dibuat sangat kreatif dan branded. Cocok banget untuk kebutuhan acara kami. Harga juga sangat terjangkau untuk kualitas sebagus ini.':
+      'The QR code created was very creative and branded. Perfect for our event needs. Very affordable for such high quality.',
+    'Event Organizer, Surabaya':           'Event Organizer, Surabaya',
+    'Data entry yang rapi dan akurat. Pekerjaan selesai lebih cepat dari deadline yang ditetapkan. Pasti akan order lagi untuk proyek berikutnya!':
+      'Neat and accurate data entry. Work finished faster than the set deadline. Will definitely order again for the next project!',
+    'Manajer Operasional, Semarang':       'Operations Manager, Semarang',
+    'Artikel yang ditulis sangat berkualitas dan SEO-friendly. Traffic website kami meningkat signifikan setelah menggunakan konten yang dibuat Aditya.':
+      'The articles written were high quality and SEO-friendly. Our website traffic increased significantly after using Aditya\'s content.',
+    'Digital Marketing, Yogyakarta':       'Digital Marketing, Yogyakarta',
+    /* ── FAQ ── */
+    'Pertanyaan':                          'Common',
+    'umum':                                'Questions',
+    'Jawaban atas pertanyaan yang paling sering ditanyakan klien.':
+      'Answers to the most frequently asked questions by clients.',
+    'Berapa lama waktu pengerjaan?':
+      'How long does it take to complete?',
+    'Tergantung jenis proyek. Landing page sederhana bisa 2-3 hari, aplikasi Android 5-14 hari. Gunakan kalkulator harga di atas untuk estimasi lebih akurat.':
+      'Depends on the project type. A simple landing page can take 2-3 days, Android app 5-14 days. Use the price calculator above for a more accurate estimate.',
+    'Apakah ada garansi setelah selesai?':
+      'Is there a guarantee after completion?',
+    'Ya! Setiap proyek mendapat garansi bug fixing 7 hari setelah delivery. Bisa diperpanjang hingga 30 hari dengan paket garansi tambahan.':
+      'Yes! Every project gets a 7-day bug fixing guarantee after delivery. Can be extended to 30 days with an additional guarantee package.',
+    'Bagaimana cara pembayaran?':
+      'How is payment made?',
+    'Pembayaran bisa via Transfer Bank, GoPay, OVO, atau QRIS. Biasanya 50% di awal dan 50% setelah proyek selesai.':
+      'Payment can be via Bank Transfer, GoPay, OVO, or QRIS. Usually 50% upfront and 50% after the project is completed.',
+    'Berapa kali bisa revisi?':
+      'How many revisions are included?',
+    'Minimal 2x revisi gratis di setiap paket. Revisi tidak terbatas tersedia dengan biaya tambahan yang tertera di kalkulator harga.':
+      'Minimum 2 free revisions per package. Unlimited revisions are available at an additional cost shown in the price calculator.',
+    'Apakah menerima proyek dari luar Indonesia?':
+      'Do you accept projects from outside Indonesia?',
+    'Tentu! Saya menerima klien dari seluruh dunia dengan pembayaran via bank transfer atau platform freelance internasional.':
+      'Absolutely! I accept clients from all over the world with payment via bank transfer or international freelance platforms.',
+    'Format file apa yang diberikan?':
+      'What file formats are provided?',
+    'Semua source code (.html, .css, .js, .py, dll), file desain (jika ada), dan dokumentasi singkat cara penggunaan.':
+      'All source code (.html, .css, .js, .py, etc.), design files (if any), and brief usage documentation.',
+    'Apakah bisa konsultasi dulu sebelum order?':
+      'Can I consult before ordering?',
+    'Tentu! Konsultasi gratis via WhatsApp. Ceritakan kebutuhanmu dan saya akan berikan saran terbaik.':
+      'Of course! Free consultation via WhatsApp. Tell me your needs and I\'ll give the best advice.',
+    'Apakah menerima proyek urgent?':
+      'Do you accept urgent projects?',
+    'Ya! Tersedia opsi pengerjaan kilat (2x lebih cepat) dengan biaya tambahan. Pesan jauh-jauh hari untuk mendapatkan slot.':
+      'Yes! A rush option (2x faster) is available at an additional cost. Book early to get a slot.',
+    /* ── Kontak ── */
+    'Ada proyek?':                         'Have a project?',
+    'Mari ngobrol.':                       'Let\'s talk.',
+    'Siap membantu':                       'Ready to help',
+    'kapanpun kamu butuh':                 'whenever you need',
+    'Konsultasi gratis, tanpa biaya tersembunyi. Ceritakan kebutuhanmu dan saya berikan solusi terbaik sesuai anggaran kamu.':
+      'Free consultation, no hidden fees. Tell me your needs and I\'ll provide the best solution within your budget.',
+    'WhatsApp':                            'WhatsApp',
+    'Email':                               'Email',
+    '📋 Salin':                            '📋 Copy',
+    'Lynkid Store':                        'Lynkid Store',
+    'Produk digital siap pakai':           'Ready-to-use digital products',
+    'Kirim Pesan':                         'Send Message',
+    'Nama Lengkap':                        'Full Name',
+    'Jenis Layanan':                       'Service Type',
+    'Anggaran':                            'Budget',
+    'Ceritakan Proyekmu':                  'Describe Your Project',
+    'Kirim Pesan →':                       'Send Message →',
+    '⚡ Biasanya saya balas dalam < 2 jam di jam aktif':
+      '⚡ I usually reply within < 2 hours during active hours',
+    /* ── Footer ── */
+    '© 2024 Aditya · Dibuat dengan ☕ & dedikasi · Indonesia 🇮🇩':
+      '© 2024 Aditya · Built with ☕ & dedication · Indonesia 🇮🇩',
+    'GitHub':                              'GitHub',
+    'Lynkid':                              'Lynkid',
+  };
+
+  /* ════════════════════════════════════════════════════
+     FUNGSI UTAMA: Scan seluruh text node di DOM
+     dan ganti sesuai kamus. Simpan teks asli agar
+     bisa dikembalikan ke bahasa Indonesia.
+  ════════════════════════════════════════════════════ */
+
+  /* Elemen yang TIDAK boleh disentuh */
+  var SKIP_TAGS = new Set([
+    'SCRIPT','STYLE','META','LINK','CANVAS',
+    'INPUT','SELECT','OPTION','TEXTAREA','CODE',
+    'SVG','PATH'
+  ]);
+
+  /* Atribut placeholder yang perlu diterjemahkan */
+  var PLACEHOLDER_MAP_EN = {
+    'Nama kamu':                       'Your name',
+    'email@kamu.com':                  'email@yours.com',
+    'Deskripsikan kebutuhanmu...':     'Describe your needs...',
+    'Contoh: Rp 150.000 – Rp 300.000':'Example: Rp 150,000 – Rp 300,000'
+  };
+  var PLACEHOLDER_MAP_ID = {};
+  Object.keys(PLACEHOLDER_MAP_EN).forEach(function(k){
+    PLACEHOLDER_MAP_ID[PLACEHOLDER_MAP_EN[k]] = k;
+  });
+
+  /* Susuri semua text node di bawah elemen akar */
+  function susuri(elemen, terjemahkan) {
+    elemen.childNodes.forEach(function(node) {
+      /* Text node langsung → terjemahkan */
+      if (node.nodeType === 3) {
+        var asli = node.nodeValue;
+        var dipotong = asli.trim();
+        if (!dipotong) return; /* Lewati whitespace */
+
+        /* Simpan ID unik jika belum ada */
+        if (!node._txId) {
+          node._txId = ++idCounter;
+          simpanTeks[node._txId] = asli; /* Simpan teks ID asli */
+        }
+
+        if (terjemahkan) {
+          /* Terjemahkan ke EN — cari teks trimmed di kamus */
+          var terjemahan = KAMUS[dipotong];
+          if (terjemahan) {
+            /* Pertahankan whitespace prefix/suffix */
+            var prefix = asli.slice(0, asli.indexOf(dipotong));
+            var suffix = asli.slice(asli.indexOf(dipotong) + dipotong.length);
+            node.nodeValue = prefix + terjemahan + suffix;
+          }
+        } else {
+          /* Kembalikan ke teks asli Indonesia */
+          if (simpanTeks[node._txId]) {
+            node.nodeValue = simpanTeks[node._txId];
+          }
+        }
+      }
+      /* Element node → rekursif, kecuali tag yang diskip */
+      else if (node.nodeType === 1) {
+        if (!SKIP_TAGS.has(node.tagName)) {
+          susuri(node, terjemahkan);
+        }
+      }
+    });
+  }
+
+  /* Terjemahkan placeholder input */
+  function terjemahkanPlaceholder(keEN) {
+    document.querySelectorAll('[placeholder]').forEach(function(el) {
+      var peta = keEN ? PLACEHOLDER_MAP_EN : PLACEHOLDER_MAP_ID;
+      var ph   = el.getAttribute('placeholder');
+      if (peta[ph]) el.setAttribute('placeholder', peta[ph]);
+    });
+  }
+
+  /* Terjemahkan atribut title/aria-label */
+  function terjemahkanAtribut(keEN) {
+    var peta = keEN ? {
+      'Menu':'Menu', 'Kembali ke atas':'Back to top', 'Buka chat':'Open chat'
+    } : {
+      'Menu':'Menu', 'Back to top':'Kembali ke atas', 'Open chat':'Buka chat'
+    };
+    document.querySelectorAll('[aria-label]').forEach(function(el){
+      var v = el.getAttribute('aria-label');
+      if (peta[v]) el.setAttribute('aria-label', peta[v]);
+    });
+  }
+
+  /* ── FUNGSI TERAPKAN ── */
+  function terapkan(keEN) {
+    /* 1. Ganti semua text node */
+    susuri(document.body, keEN);
+
+    /* 2. Placeholder input */
+    terjemahkanPlaceholder(keEN);
+
+    /* 3. Aria labels */
+    terjemahkanAtribut(keEN);
+
+    /* 4. Update label tombol */
+    btn.textContent = keEN ? 'EN / ID' : 'ID / EN';
+
+    /* 5. Update atribut lang pada html */
+    document.documentElement.lang = keEN ? 'en' : 'id';
+
+    /* 6. Notifikasi toast */
+    tampilToast(
+      keEN ? 'Language changed to English 🇺🇸' : 'Bahasa diubah ke Indonesia 🇮🇩',
+      '', '🌐'
+    );
+  }
+
+  /* ── EVENT LISTENER ── */
+  btn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    lang = (lang === 'id') ? 'en' : 'id';
+    terapkan(lang === 'en');
+  });
+
+})();
+
+/* ════════════════════════════
+   M9: KALKULATOR HARGA
+   Semua logika perhitungan harga
+════════════════════════════ */
+(function modulKalkulator() {
+  /* ── Data layanan dengan ikon ── */
+  var layananData = [
+    {id:'web',    ikon:'🌐', nama:'Landing Page & Website',  harga:{1:75000,  2:150000, 3:300000}, waktu:{1:'2-3 hari',  2:'3-5 hari',  3:'7-14 hari'}},
+    {id:'app',    ikon:'📱', nama:'Aplikasi Android & iOS',  harga:{1:200000, 2:350000, 3:600000}, waktu:{1:'3-5 hari',  2:'5-10 hari', 3:'14-21 hari'}},
+    {id:'qr',     ikon:'🔷', nama:'QR Code Custom',          harga:{1:15000,  2:25000,  3:40000},  waktu:{1:'1 hari',    2:'1-2 hari',  3:'2-3 hari'}},
+    {id:'bug',    ikon:'🐛', nama:'Bug Fixing & Optimasi',   harga:{1:50000,  2:100000, 3:200000}, waktu:{1:'1 hari',    2:'2-3 hari',  3:'3-7 hari'}},
+    {id:'data',   ikon:'📊', nama:'Data Entry & Scraping',   harga:{1:30000,  2:60000,  3:120000}, waktu:{1:'1 hari',    2:'2-3 hari',  3:'3-5 hari'}},
+    {id:'konten', ikon:'✍️', nama:'Penulisan Konten',         harga:{1:25000,  2:50000,  3:100000}, waktu:{1:'1 hari',    2:'2-3 hari',  3:'3-5 hari'}},
+  ];
+
+  /* ── Data fitur tambahan dengan ikon ── */
+  var fiturData = [
+    {id:'revisi',  ikon:'🔄', nama:'Revisi Tak Terbatas',        harga:25000},
+    {id:'garansi', ikon:'🛡️', nama:'Garansi 30 Hari',            harga:30000},
+    {id:'mobile',  ikon:'📐', nama:'Optimasi Mobile Extra',      harga:20000},
+    {id:'seo',     ikon:'🔍', nama:'Optimasi SEO Dasar',         harga:35000},
+    {id:'cepat',   ikon:'⚡', nama:'Pengerjaan Kilat (2x cepat)',harga:50000},
+  ];
+
+  /* ── Format rupiah ── */
+  function formatRp(n) {
+    return 'Rp ' + n.toLocaleString('id-ID');
+  }
+
+  /* ── Animasi angka naik (counter) ── */
+  var totalSekarang = 0;
+  function animasiTotal(target) {
+    var el    = document.getElementById('kalk-total');
+    var start = totalSekarang;
+    var durasi = 500;
+    var mulai  = performance.now();
+    function step(now) {
+      var p = Math.min((now - mulai) / durasi, 1);
+      var e = 1 - Math.pow(1 - p, 3); /* ease-out cubic */
+      var nilai = Math.round(start + (target - start) * e);
+      el.textContent = formatRp(nilai);
+      if (p < 1) requestAnimationFrame(step);
+      else { totalSekarang = target; el.textContent = formatRp(target); }
+    }
+    requestAnimationFrame(step);
+  }
+
+  /* ── Render item layanan menggunakan DOM (bukan innerHTML) ── */
+  var opsiEl = document.getElementById('kalk-opsi');
+  layananData.forEach(function(l) {
+    var div = document.createElement('div');
+    div.className = 'kalk-item';
+    div.setAttribute('data-kalk-id', l.id);
+
+    /* Baris atas: ikon + nama + cbox */
+    var head = document.createElement('div');
+    head.className = 'kalk-item-head';
+
+    var ikon = document.createElement('div');
+    ikon.className = 'kalk-item-ikon';
+    ikon.textContent = l.ikon;
+
+    var nm = document.createElement('span');
+    nm.className = 'kalk-item-nm';
+    nm.textContent = l.nama; /* textContent — aman dari HTML parsing */
+
+    var cbox = document.createElement('div');
+    cbox.className = 'kalk-cbox';
+    cbox.textContent = '✓';
+
+    head.appendChild(ikon);
+    head.appendChild(nm);
+    head.appendChild(cbox);
+
+    /* Baris bawah: harga */
+    var hargaEl = document.createElement('span');
+    hargaEl.className = 'kalk-item-harga kalk-harga-dinamis';
+    hargaEl.setAttribute('data-kalk-id', l.id);
+    hargaEl.textContent = 'mulai ' + formatRp(l.harga[1]);
+
+    div.appendChild(head);
+    div.appendChild(hargaEl);
+
+    div.addEventListener('click', function() {
+      div.classList.toggle('aktif');
+      hitung();
+    });
+    opsiEl.appendChild(div);
+  });
+
+  /* ── Render toggle fitur tambahan menggunakan DOM ── */
+  var fiturEl = document.getElementById('kalk-fitur');
+  fiturData.forEach(function(f) {
+    var div = document.createElement('div');
+    div.className = 'kalk-toggle';
+    div.setAttribute('data-kalk-id', f.id);
+
+    var nm = document.createElement('div');
+    nm.className = 'kalk-toggle-nm';
+
+    var ikonSpan = document.createElement('span');
+    ikonSpan.textContent = f.ikon + ' ';
+
+    var namaSpan = document.createElement('span');
+    namaSpan.textContent = f.nama;
+
+    var hargaSpan = document.createElement('span');
+    hargaSpan.style.cssText = 'color:var(--neon);font-family:var(--fm);margin-left:4px;font-size:.58rem;';
+    hargaSpan.textContent = '+' + formatRp(f.harga);
+
+    nm.appendChild(ikonSpan);
+    nm.appendChild(namaSpan);
+    nm.appendChild(hargaSpan);
+
+    var sw = document.createElement('div');
+    sw.className = 'kalk-switch';
+
+    div.appendChild(nm);
+    div.appendChild(sw);
+
+    div.addEventListener('click', function() {
+      div.classList.toggle('on');
+      hitung();
+    });
+    fiturEl.appendChild(div);
+  });
+
+  /* ── Slider kompleksitas ── */
+  var slider   = document.getElementById('kalk-slider');
+  var levelLbl = document.getElementById('kalk-level-lbl');
+  var levelNama = {1:'Sederhana', 2:'Sedang', 3:'Kompleks'};
+
+  slider.addEventListener('input', function() {
+    levelLbl.textContent = levelNama[slider.value];
+    /* Update label harga pada setiap item */
+    perbarui_label_harga();
+    hitung();
+  });
+
+  function perbarui_label_harga() {
+    var level = parseInt(slider.value);
+    document.querySelectorAll('[data-kalk-id].kalk-harga-dinamis').forEach(function(el) {
+      var id = el.getAttribute('data-kalk-id');
+      var l  = layananData.find(function(x) { return x.id === id; });
+      if (l) el.textContent = 'mulai ' + formatRp(l.harga[level]);
+    });
+  }
+
+  /* ── Fungsi hitung utama ── */
+  function hitung() {
+    var level     = parseInt(slider.value);
+    var total     = 0;
+    var rincian   = [];
+    var waktuArr  = [];
+
+    /* Layanan yang dipilih */
+    document.querySelectorAll('.kalk-item.aktif').forEach(function(el) {
+      var id = el.getAttribute('data-kalk-id');
+      var l  = layananData.find(function(x) { return x.id === id; });
+      if (l) {
+        var h = l.harga[level];
+        total += h;
+        rincian.push({nama: l.ikon + ' ' + l.nama, harga: h});
+        waktuArr.push(l.waktu[level]);
+      }
+    });
+
+    /* Fitur tambahan yang aktif */
+    document.querySelectorAll('.kalk-toggle.on').forEach(function(el) {
+      var id = el.getAttribute('data-kalk-id');
+      var f  = fiturData.find(function(x) { return x.id === id; });
+      if (f) {
+        total += f.harga;
+        rincian.push({nama: f.ikon + ' ' + f.nama, harga: f.harga});
+      }
+    });
+
+    /* Render rincian menggunakan DOM */
+    var rEl = document.getElementById('kalk-rincian');
+    while (rEl.firstChild) rEl.removeChild(rEl.firstChild);
+
+    if (rincian.length === 0) {
+      var brs = document.createElement('div');
+      brs.className = 'kalk-baris';
+      var nm = document.createElement('span'); nm.className = 'kalk-baris-nm'; nm.textContent = 'Pilih layanan di kiri...';
+      var hg = document.createElement('span'); hg.className = 'kalk-baris-harga'; hg.textContent = '—';
+      brs.appendChild(nm); brs.appendChild(hg);
+      rEl.appendChild(brs);
+    } else {
+      rincian.forEach(function(r) {
+        var brs = document.createElement('div');
+        brs.className = 'kalk-baris';
+        var nm = document.createElement('span'); nm.className = 'kalk-baris-nm'; nm.textContent = r.nama;
+        var hg = document.createElement('span'); hg.className = 'kalk-baris-harga'; hg.textContent = formatRp(r.harga);
+        brs.appendChild(nm); brs.appendChild(hg);
+        rEl.appendChild(brs);
+      });
+    }
+
+    /* Animasi total */
+    animasiTotal(total);
+
+    /* Update waktu */
+    var wEl = document.getElementById('kalk-waktu');
+    var w = waktuArr.length > 0 ? waktuArr[waktuArr.length - 1] : '—';
+    wEl.innerHTML = '';
+    var ws = document.createElement('span'); ws.textContent = w;
+    wEl.appendChild(ws);
+  }
+
+  hitung();
+})();
+
+/* ════════════════════════════
+   M10: FILTER PORTOFOLIO
+════════════════════════════ */
+(function modulFilter() {
+  var btns = document.querySelectorAll('.pf-btn');
+  var kartu = document.querySelectorAll('.pc[data-kategori]');
+  btns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      btns.forEach(function(b){ b.classList.remove('aktif'); });
+      btn.classList.add('aktif');
+      var filter = btn.getAttribute('data-filter');
+      kartu.forEach(function(k){
+        var kat = k.getAttribute('data-kategori');
+        if (filter === 'semua' || kat.includes(filter)) {
+          k.classList.remove('sembunyi');
+        } else {
+          k.classList.add('sembunyi');
+        }
+      });
+    });
+  });
+})();
+
+/* ════════════════════════════
+   M11: TILT 3D (Desktop)
+════════════════════════════ */
+(function modulTilt() {
+  if (!window.matchMedia('(pointer:fine)').matches) return;
+  ['holo','tilt1','tilt2','tilt3','tilt4'].forEach(function(id){
+    var el = document.getElementById(id); if (!el) return;
+    el.addEventListener('mousemove', function(e){
+      var k=el.getBoundingClientRect();
+      var rX=(e.clientY-k.top-k.height/2)/k.height*(-10);
+      var rY=(e.clientX-k.left-k.width/2)/k.width*10;
+      el.style.transform='perspective(900px) rotateX('+rX+'deg) rotateY('+rY+'deg) scale3d(1.02,1.02,1.02)';
+    });
+    el.addEventListener('mouseleave', function(){
+      el.style.transition='transform .6s cubic-bezier(.4,0,.2,1)';
+      el.style.transform='perspective(900px) rotateX(0) rotateY(0) scale3d(1,1,1)';
+      setTimeout(function(){ el.style.transition=''; }, 600);
+    });
+  });
+})();
+
+/* ════════════════════════════
+   M12: FAQ ACCORDION
+════════════════════════════ */
+(function modulFaq() {
+  var faqData = [
+    {q:'Berapa lama waktu pengerjaan?', a:'Tergantung jenis proyek. Landing page sederhana bisa 2-3 hari, aplikasi Android 5-14 hari. Gunakan kalkulator harga di atas untuk estimasi lebih akurat.'},
+    {q:'Apakah ada garansi setelah selesai?', a:'Ya! Setiap proyek mendapat garansi bug fixing 7 hari setelah delivery. Bisa diperpanjang hingga 30 hari dengan paket garansi tambahan.'},
+    {q:'Bagaimana cara pembayaran?', a:'Pembayaran bisa via Transfer Bank, GoPay, OVO, atau QRIS. Biasanya 50% di awal dan 50% setelah proyek selesai.'},
+    {q:'Berapa kali bisa revisi?', a:'Minimal 2x revisi gratis di setiap paket. Revisi tidak terbatas tersedia dengan biaya tambahan yang tertera di kalkulator harga.'},
+    {q:'Apakah menerima proyek dari luar Indonesia?', a:'Tentu! Saya menerima klien dari seluruh dunia dengan pembayaran via bank transfer atau platform freelance internasional.'},
+    {q:'Format file apa yang diberikan?', a:'Semua source code (.html, .css, .js, .py, dll), file desain (jika ada), dan dokumentasi singkat cara penggunaan.'},
+    {q:'Apakah bisa konsultasi dulu sebelum order?', a:'Tentu! Konsultasi gratis via WhatsApp. Ceritakan kebutuhanmu dan saya akan berikan saran terbaik.'},
+    {q:'Apakah menerima proyek urgent?', a:'Ya! Tersedia opsi pengerjaan kilat (2x lebih cepat) dengan biaya tambahan. Pesan jauh-jauh hari untuk mendapatkan slot.'},
+  ];
+
+  var kiri = document.getElementById('faq-kiri');
+  var kanan = document.getElementById('faq-kanan');
+
+  faqData.forEach(function(f, i){
+    var div = document.createElement('div');
+    div.className = 'faq-item';
+    div.innerHTML = '<div class="faq-q"><span>'+f.q+'</span><div class="faq-ikon">+</div></div><div class="faq-a"><div class="faq-a-in">'+f.a+'</div></div>';
+    div.querySelector('.faq-q').addEventListener('click', function(){
+      var terbuka = div.classList.contains('buka');
+      document.querySelectorAll('.faq-item.buka').forEach(function(d){ d.classList.remove('buka'); });
+      if (!terbuka) div.classList.add('buka');
+    });
+    (i % 2 === 0 ? kiri : kanan).appendChild(div);
+  });
+})();
+
+/* ════════════════════════════
+   M13: SLIDER TESTIMONIAL
+════════════════════════════ */
+(function modulTesti() {
+  var track = document.getElementById('testi-track');
+  var dotsEl = document.getElementById('testi-dots');
+  var prev = document.getElementById('tn-prev');
+  var next = document.getElementById('tn-next');
+  if (!track) return;
+
+  var kartu = track.querySelectorAll('.testi-kartu');
+  var total = kartu.length;
+  var aktif = 0;
+
+  /* Buat dots */
+  for (var i=0; i<total; i++) {
+    var d = document.createElement('div');
+    d.className = 'td-dot' + (i===0?' aktif':'');
+    d.setAttribute('data-i', i);
+    d.addEventListener('click', function(){ geser(parseInt(this.getAttribute('data-i'))); });
+    dotsEl.appendChild(d);
+  }
+
+  function geser(ke) {
+    aktif = (ke + total) % total;
+    var lebar = kartu[0].offsetWidth + 16;
+    track.scrollTo({ left: aktif * lebar, behavior: 'smooth' });
+    dotsEl.querySelectorAll('.td-dot').forEach(function(d,i){ d.classList.toggle('aktif', i===aktif); });
+  }
+
+  prev.addEventListener('click', function(){ geser(aktif-1); });
+  next.addEventListener('click', function(){ geser(aktif+1); });
+
+  /* Auto-play setiap 5 detik */
+  setInterval(function(){ geser(aktif+1); }, 5000);
+})();
+
+/* ════════════════════════════
+   M14: FLOAT CHAT
+════════════════════════════ */
+(function modulChat() {
+  var btn = document.getElementById('chat-btn');
+  var panel = document.getElementById('chat-panel');
+  var tutup = document.getElementById('chat-tutup');
+  if (!btn || !panel) return;
+
+  btn.addEventListener('click', function(){
+    panel.classList.toggle('on');
+    /* Hapus notif dot saat dibuka */
+    var notif = btn.querySelector('.chat-notif');
+    if (notif && panel.classList.contains('on')) notif.style.display='none';
+  });
+  if (tutup) tutup.addEventListener('click', function(){ panel.classList.remove('on'); });
+
+  /* Tutup saat klik di luar */
+  document.addEventListener('click', function(e){
+    if (!btn.contains(e.target) && !panel.contains(e.target)) panel.classList.remove('on');
+  });
+
+  /* Tampilkan notif setelah 4 detik */
+  setTimeout(function(){ tampilToast('👋 Hai! Ada yang bisa saya bantu?', 'info', '💬'); }, 4000);
+})();
+
+/* ════════════════════════════
+   M15: TOMBOL KE ATAS
+════════════════════════════ */
+(function modulToAtas() {
+  var btn = document.getElementById('to-top');
+  window.addEventListener('scroll', function(){ btn.classList.toggle('on', window.scrollY > 400); }, {passive:true});
+  btn.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
+})();
+
+/* ════════════════════════════
+   M16: HAMBURGFER + NAV SCROLL
+════════════════════════════ */
+(function modulNav() {
+  var nav = document.getElementById('nav');
+  var pro = document.getElementById('progres');
+  var hb  = document.getElementById('hamburger');
+  var dr  = document.getElementById('drawer');
+
+  /* Progres scroll */
+  window.addEventListener('scroll', function(){
+    nav.classList.toggle('gulir', window.scrollY > 40);
+    var t = document.body.scrollHeight - window.innerHeight;
+    if (t > 0) pro.style.width = (window.scrollY / t * 100) + '%';
+  }, {passive:true});
+
+  if (!hb || !dr) return;
+
+  /* Fungsi buka/tutup drawer */
+  function bukaDrawer() {
+    hb.classList.add('on');
+    dr.classList.add('on');
+  }
+  function tutupDrawer() {
+    hb.classList.remove('on');
+    dr.classList.remove('on');
+  }
+  function toggleDrawer() {
+    if (dr.classList.contains('on')) tutupDrawer();
+    else bukaDrawer();
+  }
+
+  /* Klik hamburger — stopPropagation agar tidak trigger tutup langsung */
+  hb.addEventListener('click', function(e) {
+    e.stopPropagation();
+    toggleDrawer();
+  });
+
+  /* Klik link di drawer → tutup drawer lalu navigasi */
+  dr.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      tutupDrawer();
+    });
+  });
+
+  /* Klik di luar nav + drawer → tutup drawer */
+  document.addEventListener('click', function(e) {
+    if (dr.classList.contains('on')) {
+      /* Cek apakah klik di dalam nav (termasuk tombol bahasa & tema) */
+      var navelEl = document.getElementById('nav');
+      if (!navelEl.contains(e.target) && !dr.contains(e.target)) {
+        tutupDrawer();
+      }
+    }
+  });
+
+  /* Tutup drawer saat scroll */
+  window.addEventListener('scroll', function() {
+    if (dr.classList.contains('on')) tutupDrawer();
+  }, {passive:true});
+})();
+
+/* ════════════════════════════
+   M17: COUNT-UP + SCROLL REVEAL
+════════════════════════════ */
+(function modulReveal() {
+  /* Count-up */
+  var elH = document.querySelectorAll('.hitung');
+  function naik(el){
+    var t=parseInt(el.getAttribute('data-t')), s=el.getAttribute('data-s')||'', d=1800, m=performance.now();
+    (function f(n){ var p=Math.min((n-m)/d,1), e=1-Math.pow(1-p,3); el.textContent=Math.round(e*t)+s; if(p<1)requestAnimationFrame(f); })(performance.now());
+  }
+  var ob1 = new IntersectionObserver(function(en){ if(en[0].isIntersecting){elH.forEach(naik);ob1.disconnect();} }, {threshold:.5});
+  var hs = document.querySelector('.hero-stat'); if (hs) ob1.observe(hs);
+
+  /* Scroll reveal */
+  var ob2 = new IntersectionObserver(function(en){ en.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('on'); }); }, {threshold:.08});
+  document.querySelectorAll('.rv,.rv-c').forEach(function(el){ ob2.observe(el); });
+
+  /* Skill bars */
+  var sw = document.getElementById('skill-wadah');
+  if (sw) {
+    var ob3 = new IntersectionObserver(function(en){ if(en[0].isIntersecting){ sw.querySelectorAll('.sk-i').forEach(function(b,i){ setTimeout(function(){ b.style.transform='scaleX('+b.getAttribute('data-w')+')'; b.classList.add('on'); },i*90); }); ob3.disconnect(); } }, {threshold:.3});
+    ob3.observe(sw);
+  }
+})();
+
+/* ════════════════════════════
+   M18: TOMBOL CV DOWNLOAD
+════════════════════════════ */
+(function modulCV() {
+  var btn = document.getElementById('btn-cv');
+  if (!btn) return;
+  btn.addEventListener('click', function(){
+    /* Tampilkan pilihan */
+    tampilToast('Fitur download CV akan segera tersedia! Hubungi via WhatsApp untuk versi terbaru.', 'info', '📄');
+    setTimeout(function(){ window.open('https://wa.me/6285136500428?text=Halo! Saya ingin minta CV/portofolio lengkap.', '_blank'); }, 1200);
+  });
+})();
+
+/* ════════════════════════════
+   M19: SALIN EMAIL
+════════════════════════════ */
+window.salinEmail = function() {
+  var email = 'adityakusuma264@gmail.com';
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(email).then(function(){
+      tampilToast('Email berhasil disalin: ' + email, 'sukses', '✅');
+    });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = email; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    tampilToast('Email berhasil disalin!', 'sukses', '✅');
+  }
+};
+
+/* ════════════════════════════
+   M20: FORM VALIDASI & KIRIM
+════════════════════════════ */
+(function modulForm() {
+  var btn = document.getElementById('btn-kirim');
+  if (!btn) return;
+  btn.addEventListener('click', function(){
+    var nama = document.getElementById('f-nama').value.trim();
+    var email = document.getElementById('f-email').value.trim();
+    var pesan = document.getElementById('f-pesan').value.trim();
+    if (!nama) { tampilToast('Mohon isi nama kamu!', 'error', '⚠️'); return; }
+    if (!email || !email.includes('@')) { tampilToast('Mohon isi email yang valid!', 'error', '⚠️'); return; }
+    if (!pesan) { tampilToast('Mohon ceritakan proyekmu!', 'error', '⚠️'); return; }
+    var asli = btn.textContent;
+    btn.textContent = '⟳ Mengirim...'; btn.disabled = true;
+    setTimeout(function(){
+      btn.textContent = '✓ Terkirim!';
+      btn.style.background = 'linear-gradient(135deg,#1a5a3a,#27c93f)';
+      tampilToast('Pesan berhasil terkirim! Saya akan segera membalasnya.', 'sukses', '✅');
+      setTimeout(function(){ btn.textContent=asli; btn.style.background=''; btn.disabled=false; }, 3500);
+    }, 1200);
+  });
+})();
+
+/* ════════════════════════════
+   M21: EASTER EGG KONAMI
+   ↑↑↓↓←→←→BA
+════════════════════════════ */
+(function modulEgg() {
+  var k=[38,38,40,40,37,39,37,39,66,65],p=0,a=false;
+  document.addEventListener('keydown',function(e){
+    p=(e.keyCode===k[p])?p+1:0;
+    if(p===k.length){p=0;if(a)return;a=true;
+      var c=document.createElement('canvas');c.style.cssText='position:fixed;inset:0;z-index:8000;pointer-events:none;';document.body.appendChild(c);
+      var cx=c.getContext('2d');c.width=window.innerWidth;c.height=window.innerHeight;
+      var cols=Math.floor(c.width/16),dr=Array(cols).fill(1),ch='ADITYA0123456789アイウエオ{}[]<>/';
+            var iv=setInterval(function(){
+        cx.fillStyle='rgba(0,0,0,.05)';
+        cx.fillRect(0,0,c.width,c.height);
+        cx.fillStyle='#00ff88';
+        cx.font='14px DM Mono';
+        dr.forEach(function(y,i){
+          cx.fillText(ch[Math.floor(Math.random()*ch.length)],i*16,y*16);
+          if(y*16>c.height&&Math.random()>.975)dr[i]=0;
+          dr[i]++;
+        });
+      },50);
+      tampilToast('\uD83C\uDFAE Kode Konami aktif! Matrix Rain ON','info','\uD83C\uDFAE');
+      setTimeout(function(){clearInterval(iv);document.body.removeChild(c);a=false;},4000);
+    }
+  });
+})();
+</script>
+</body>
+</html>
